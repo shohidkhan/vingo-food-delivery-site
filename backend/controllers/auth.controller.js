@@ -1,0 +1,86 @@
+import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
+import getToken from "../utilities/token.js";
+
+export const singUp = async (req, res) => {
+  try {
+    const { fullName, email, password, mobile, role } = req.body;
+    const user = await User.fineOne({ email });
+
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
+    }
+
+    if (mobile.length < 10) {
+      return res
+        .status(400)
+        .json({ message: "Mobile number must be at least 10 digits" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user = User.create({
+      fullName,
+      email,
+      password: hashedPassword,
+      mobile,
+      role,
+    });
+
+    const token = await getToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).json({ message: "User created successfully" });
+  } catch (error) {
+    res.status(500).json(`sign up error: ${error.message}`);
+    console.log(error.message);
+  }
+};
+export const singIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isPasswordMatch = bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    const token = getToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  } catch (error) {
+    res.status(500).json(`sign in error: ${error.message}`);
+    console.log(error.message);
+  }
+};
+export const singOut = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ message: "User signed out successfully" });
+  } catch (error) {
+    res.status(500).json(`sign out error: ${error.message}`);
+    console.log(error.message);
+  }
+};
