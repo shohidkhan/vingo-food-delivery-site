@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema(
       enum: ["user", "owner", "deliveryBoy"],
       required: true,
     },
-    resetOpt: {
+    resetOtp: {
       type: String,
       default: null,
       required: false,

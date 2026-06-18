@@ -84,3 +84,75 @@ export const singOut = async (req, res) => {
     console.log(error.message);
   }
 };
+export const sendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    user.resetOtp = otp;
+    user.isOtpVerified = false;
+    user.optExpires = Date.now() + 5 * 60 * 1000;
+
+    await user.save();
+    await sendOtpMail(email, otp);
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    res.status(500).json(`send otp error: ${error.message}`);
+    console.log(error.message);
+  }
+};
+
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+
+    if (user.optExpires < Date.now()) {
+      return res.status(400).json({ message: "OTP has expired." });
+    }
+
+    if (user.resetOtp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+
+    user.isOtpVerified = true;
+    user.resetOtp = null;
+    user.optExpires = null;
+    await user.save();
+    res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    res.status(500).json(`verify otp error: ${error.message}`);
+    console.log(error.message);
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist." });
+    }
+    if (user.isOtpVerified === false) {
+      return res.status(400).json({ message: "OTP not verified." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.isOtpVerified = false;
+    await user.save();
+    res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    res.status(500).json(`reset password error: ${error.message}`);
+    console.log(error.message);
+  }
+};

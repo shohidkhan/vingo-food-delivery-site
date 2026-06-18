@@ -1,14 +1,23 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   port: 465,
   secure: true, // use STARTTLS (upgrade connection to TLS after connecting)
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.EMAIL,
+    pass: process.env.PASS,
   },
 });
 
-// vingo
-// hfaj ytwl zbqm gnur
+export const sendOtpMail = async (to, otp) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL,
+    to,
+    subject: "Reset Password OTP",
+    html: `<p>Your OTP is <b>${otp}</b>. It expires in 5 minutes. </p>`,
+  });
+};
