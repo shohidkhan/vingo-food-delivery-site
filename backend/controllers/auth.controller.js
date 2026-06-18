@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import getToken from "../utilities/token.js";
+import { sendOtpMail } from "../utilities/mail.js";
 
 export const singUp = async (req, res) => {
   try {

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import axios from "axios";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -8,7 +10,76 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const { serverUrl } = useAuth();
   const navigate = useNavigate();
+
+  const handleSetOtp = async () => {
+    try {
+      if (!email) {
+        alert("Please enter email");
+        return;
+      }
+
+      const result = await axios.post(
+        `${serverUrl}/auth/send-otp`,
+        { email },
+        { withCredentials: true },
+      );
+      console.log(result);
+
+      if (result.status === 200) {
+        alert(result.data.message);
+        setStep(2);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      if (!otp) {
+        alert("Please enter otp");
+        return;
+      }
+      const result = await axios.post(
+        `${serverUrl}/auth/verify-otp`,
+        { email, otp },
+        { withCredentials: true },
+      );
+
+      if (result.status === 200) {
+        alert(result.data.message);
+        setStep(3);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      if (!newPassword || !confirmPassword) {
+        alert("Please enter password");
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        alert("Password does not match");
+        return;
+      }
+      const result = await axios.post(
+        `${serverUrl}/auth/reset-password`,
+        { email, newPassword },
+        { withCredentials: true },
+      );
+      if (result.status === 200) {
+        alert(result.data.message);
+        navigate("/signin");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="min-h-screen bg-[#FAF6F3] flex items-center justify-center p-4 antialiased font-sans">
       {/* Forgot Password Card Container */}
@@ -55,6 +126,7 @@ const ForgotPassword = () => {
               <div className="pt-2">
                 <button
                   type="button"
+                  onClick={handleSetOtp}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
                   Send Otp
@@ -80,6 +152,7 @@ const ForgotPassword = () => {
               <div className="pt-2">
                 <button
                   type="button"
+                  onClick={handleVerifyOtp}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
                   Verify Otp
@@ -126,6 +199,7 @@ const ForgotPassword = () => {
               <div className="pt-2">
                 <button
                   type="button"
+                  onClick={handleResetPassword}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
                   Reset Password
