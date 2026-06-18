@@ -52,13 +52,13 @@ export const singIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    const isPasswordMatch = bcrypt.compare(password, user.password);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
       return res.status(400).json({ message: "Invalid password" });
@@ -71,6 +71,8 @@ export const singIn = async (req, res) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    res.status(200).json({ message: "User signed in successfully" });
   } catch (error) {
     res.status(500).json(`sign in error: ${error.message}`);
     console.log(error.message);

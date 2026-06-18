@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -16,9 +16,21 @@ const Signin = () => {
         email,
         password,
       });
+
       console.log(result);
+
+      if (result.status === 200) {
+        alert(result.data.message);
+      }
     } catch (error) {
-      console.log(error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        alert(error.response.data.message);
+      }
+      console.error(error);
     }
   };
   return (
@@ -37,7 +49,7 @@ const Signin = () => {
         </div>
 
         {/* <!-- Form Section --> */}
-        <form class="space-y-5" onsubmit={handleSignIn}>
+        <form class="space-y-5" onSubmit={handleSignIn}>
           {/* <!-- Email Input --> */}
           <div>
             <label
