@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { useDispatch, useSelector } from "react-redux";
+import { googleSignIn } from "../../redux/authSlice";
 
 const Signup = () => {
   const [togglePassword, setTogglePassword] = useState(false);
   const [role, setRole] = useState("user");
-  const { serverUrl, googleSignUp } = useAuth();
   const [mobile, setMobile] = useState("");
   let [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const serverUrl = useSelector((state) => state.auth.serverUrl);
+
+  console.log(serverUrl);
 
   const handleSingUp = async (e) => {
     setLoading(true);
@@ -55,21 +59,21 @@ const Signup = () => {
       alert("Please select role number");
       return;
     }
-    const result = await googleSignUp();
-    console.log(result);
+    const result = await dispatch(googleSignIn()).unwrap();
+    // console.log(result);
     try {
       const data = await axios.post(
         `${serverUrl}/auth/google-auth`,
         {
-          fullName: result.user.displayName,
-          email: result.user.email,
+          fullName: result.displayName,
+          email: result.email,
           mobile: mobile,
           role,
         },
         { withCredentials: true },
       );
 
-      console.log(data);
+      console.log(data.data.user);
     } catch (error) {
       console.log(error);
     }

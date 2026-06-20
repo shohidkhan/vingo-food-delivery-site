@@ -165,7 +165,7 @@ export const googleAuth = async (req, res) => {
   try {
     const { fullName, email, mobile, role } = req.body;
     let user = await User.findOne({ email });
-
+    console.log(user);
     if (!user) {
       const hashedPassword = await bcrypt.hash("123456", 10);
       user = await User.create({
@@ -178,6 +178,7 @@ export const googleAuth = async (req, res) => {
     }
 
     const token = getToken(user._id);
+    // console.log(token);
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
@@ -185,7 +186,7 @@ export const googleAuth = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "User signed in successfully" });
+    res.status(200).json({ message: "User signed in successfully", user });
   } catch (error) {
     res.status(500).json(`google auth error: ${error.message}`);
     console.log(error.message);

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const useCurrentUser = () => {
-  const { serverUrl } = useAuth();
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const serverUrl = useSelector((state) => state.auth.serverUrl);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {

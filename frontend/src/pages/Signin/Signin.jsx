@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import { ClipLoader, FadeLoader } from "react-spinners";
+import { useSelector, useDispatch } from "react-redux";
+import { googleSignIn } from "../../redux/authSlice.js";
 
 const Signin = () => {
   const [togglePassword, setTogglePassword] = useState(false);
-  const { serverUrl, googleSignUp } = useAuth();
+
   let [loading, setLoading] = useState(false);
+  const serverUrl = useSelector((state) => state.auth.serverUrl);
+  const dispatch = useDispatch();
   const handleSignIn = async (e) => {
     setLoading(true);
     e.preventDefault();
@@ -44,17 +47,17 @@ const Signin = () => {
   };
 
   const handleGoogleSignUp = async () => {
-    const result = await googleSignUp();
-    console.log(result);
+    const user = await dispatch(googleSignIn()).unwrap();
+    // console.log(user);
     try {
       const data = await axios.post(
         `${serverUrl}/auth/google-auth`,
         {
-          email: result.user.email,
+          email: user.email,
         },
         { withCredentials: true },
       );
-      console.log(data);
+      console.log(data.data.user);
     } catch (error) {
       console.log(error);
     }

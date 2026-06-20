@@ -6,7 +6,7 @@ export const getCurrentUser = async (req, res) => {
 
     // console.log(userId);
 
-    const user = await User.findById("6a36696f238846aab1c27ae8");
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { useSelector } from "react-redux";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { serverUrl } = useAuth();
+  const serverUrl = useSelector((state) => state.auth.serverUrl);
   const navigate = useNavigate();
   let [loading, setLoading] = useState(false);
 
