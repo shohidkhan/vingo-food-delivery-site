@@ -159,3 +159,34 @@ export const resetPassword = async (req, res) => {
     console.log(error.message);
   }
 };
+
+export const googleAuth = async (req, res) => {
+  try {
+    const { fullName, email, mobile, role } = req.body;
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const hashedPassword = await bcrypt.hash("123456", 10);
+      user = await User.create({
+        fullName,
+        email,
+        mobile,
+        role,
+        password: hashedPassword,
+      });
+    }
+
+    const token = getToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: "User signed in successfully" });
+  } catch (error) {
+    res.status(500).json(`google auth error: ${error.message}`);
+    console.log(error.message);
+  }
+};

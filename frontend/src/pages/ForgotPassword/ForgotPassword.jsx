@@ -3,6 +3,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -12,8 +13,10 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { serverUrl } = useAuth();
   const navigate = useNavigate();
+  let [loading, setLoading] = useState(false);
 
   const handleSetOtp = async () => {
+    setLoading(true);
     try {
       if (!email) {
         alert("Please enter email");
@@ -26,17 +29,20 @@ const ForgotPassword = () => {
         { withCredentials: true },
       );
       console.log(result);
+      setLoading(false);
 
       if (result.status === 200) {
         alert(result.data.message);
         setStep(2);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
 
   const handleVerifyOtp = async () => {
+    setLoading(true);
     try {
       if (!otp) {
         alert("Please enter otp");
@@ -48,16 +54,20 @@ const ForgotPassword = () => {
         { withCredentials: true },
       );
 
+      setLoading(false);
+
       if (result.status === 200) {
         alert(result.data.message);
         setStep(3);
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
 
   const handleResetPassword = async () => {
+    setLoading(true);
     try {
       if (!newPassword || !confirmPassword) {
         alert("Please enter password");
@@ -72,11 +82,14 @@ const ForgotPassword = () => {
         { email, newPassword },
         { withCredentials: true },
       );
+
+      setLoading(false);
       if (result.status === 200) {
         alert(result.data.message);
         navigate("/signin");
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -129,7 +142,11 @@ const ForgotPassword = () => {
                   onClick={handleSetOtp}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
-                  Send Otp
+                  {loading ? (
+                    <ClipLoader color="white" size={20}></ClipLoader>
+                  ) : (
+                    "Send Otp"
+                  )}
                 </button>
               </div>
             </div>
@@ -155,7 +172,11 @@ const ForgotPassword = () => {
                   onClick={handleVerifyOtp}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
-                  Verify Otp
+                  {loading ? (
+                    <ClipLoader color="white" size={20}></ClipLoader>
+                  ) : (
+                    "Verify Otp"
+                  )}
                 </button>
               </div>
             </div>
@@ -202,7 +223,11 @@ const ForgotPassword = () => {
                   onClick={handleResetPassword}
                   className="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] transition-all duration-150"
                 >
-                  Reset Password
+                  {loading ? (
+                    <ClipLoader color="white" size={20}></ClipLoader>
+                  ) : (
+                    "Reset Password"
+                  )}
                 </button>
               </div>
             </div>

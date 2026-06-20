@@ -3,11 +3,14 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { ClipLoader, FadeLoader } from "react-spinners";
 
 const Signin = () => {
   const [togglePassword, setTogglePassword] = useState(false);
-  const { serverUrl } = useAuth();
+  const { serverUrl, googleSignUp } = useAuth();
+  let [loading, setLoading] = useState(false);
   const handleSignIn = async (e) => {
+    setLoading(true);
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
@@ -16,6 +19,7 @@ const Signin = () => {
         email,
         password,
       });
+      setLoading(false);
 
       console.log(result);
 
@@ -28,9 +32,27 @@ const Signin = () => {
         error.response.data &&
         error.response.data.message
       ) {
+        setLoading(false);
         alert(error.response.data.message);
       }
       console.error(error);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    const result = await googleSignUp();
+    console.log(result);
+    try {
+      const data = await axios.post(
+        `${serverUrl}/auth/google-auth`,
+        {
+          email: result.user.email,
+        },
+        { withCredentials: true },
+      );
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -109,14 +131,20 @@ const Signin = () => {
             {/* <!-- Main Sign In Button --> */}
             <button
               type="submit"
+              disabled={loading}
               class="w-full bg-[#FF4C24] text-white font-medium py-3 px-4 rounded-xl hover:bg-[#e03d16] focus:outline-none focus:ring-2 focus:ring-[#FF4C24] focus:ring-offset-2 transform active:scale-[0.98] transition-all duration-150"
             >
-              Sign In
+              {loading ? (
+                <ClipLoader color="white" size={20}></ClipLoader>
+              ) : (
+                "Sign In"
+              )}
             </button>
 
             {/* <!-- Google Sign In Button --> */}
             <button
               type="button"
+              onClick={handleGoogleSignUp}
               class="w-full flex items-center justify-center gap-2 bg-white text-gray-700 font-medium py-3 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 transform active:scale-[0.98] transition-all duration-150"
             >
               {/* <!-- Custom Inline Google 'G' Icon --> */}
