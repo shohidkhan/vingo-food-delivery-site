@@ -15,10 +15,14 @@ const Signin = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     try {
-      const result = await axios.post(`${serverUrl}/auth/signin`, {
-        email,
-        password,
-      });
+      const result = await axios.post(
+        `${serverUrl}/auth/signin`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
       setLoading(false);
 
       console.log(result);

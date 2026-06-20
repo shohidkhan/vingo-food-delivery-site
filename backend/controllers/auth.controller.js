@@ -26,7 +26,7 @@ export const singUp = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    user = User.create({
+    user = await User.create({
       fullName,
       email,
       password: hashedPassword,
@@ -64,7 +64,8 @@ export const singIn = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = getToken(user._id);
+    const token = await getToken(user._id);
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,

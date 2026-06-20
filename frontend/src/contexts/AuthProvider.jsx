@@ -7,8 +7,6 @@ const AuthProvider = ({ children }) => {
   const serverUrl = "http://localhost:3000/api";
   const provider = new GoogleAuthProvider();
 
-  const googleSignIn = async () => {};
-
   const googleSignUp = async () => {
     const result = await signInWithPopup(auth, provider);
     return result;
