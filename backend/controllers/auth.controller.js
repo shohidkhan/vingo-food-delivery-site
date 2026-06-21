@@ -42,7 +42,7 @@ export const singUp = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(201).json({ message: "User created successfully" });
+    res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     res.status(500).json(`sign up error: ${error.message}`);
     console.log(error.message);
@@ -73,7 +73,7 @@ export const singIn = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "User signed in successfully" });
+    res.status(200).json({ message: "User signed in successfully", user });
   } catch (error) {
     res.status(500).json(`sign in error: ${error.message}`);
     console.log(error.message);

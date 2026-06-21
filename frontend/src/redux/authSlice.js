@@ -29,7 +29,14 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     serverUrl: "http://localhost:3000/api",
+    loading: true,
+  },
+  reducers: {
+    setLoading(state, action) {
+      state.loading = action.payload;
+    },
   },
 });
 
+export const { setLoading } = authSlice.actions;
 export default authSlice.reducer;

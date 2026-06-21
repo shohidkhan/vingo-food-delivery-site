@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { ClipLoader, FadeLoader } from "react-spinners";
 import { useSelector, useDispatch } from "react-redux";
-import { googleSignIn } from "../../redux/authSlice.js";
+import { googleSignIn, setLoading } from "../../redux/authSlice.js";
+import { setUserData } from "../../redux/userSlice.js";
+import useCurrentUser from "../../hooks/useCurrentUser.jsx";
 
 const Signin = () => {
   const [togglePassword, setTogglePassword] = useState(false);
 
-  let [loading, setLoading] = useState(false);
   const serverUrl = useSelector((state) => state.auth.serverUrl);
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+  const { userData } = useSelector((state) => state.user);
+  const { currentUser } = useCurrentUser();
+
+  if (loading) return "loading.....";
+
+  if (userData) {
+    return <Navigate to="/" />;
+  }
   const handleSignIn = async (e) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
@@ -26,9 +36,10 @@ const Signin = () => {
         },
         { withCredentials: true },
       );
-      setLoading(false);
+      dispatch(setLoading(false));
 
-      console.log(result);
+      dispatch(setUserData(result.data.user));
+      <Navigate to="/" />;
 
       if (result.status === 200) {
         alert(result.data.message);
@@ -39,7 +50,7 @@ const Signin = () => {
         error.response.data &&
         error.response.data.message
       ) {
-        setLoading(false);
+        dispatch(setLoading(false));
         alert(error.response.data.message);
       }
       console.error(error);
@@ -57,7 +68,9 @@ const Signin = () => {
         },
         { withCredentials: true },
       );
-      console.log(data.data.user);
+      // console.log(data.data.user);
+      dispatch(setUserData(data.data.user));
+      <Navigate to="/" />;
     } catch (error) {
       console.log(error);
     }

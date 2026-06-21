@@ -1,23 +1,30 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
-import { googleSignIn } from "../../redux/authSlice";
+import { googleSignIn, setLoading } from "../../redux/authSlice.js";
+import { setUserData } from "../../redux/userSlice.js";
+import useCurrentUser from "../../hooks/useCurrentUser.jsx";
 
 const Signup = () => {
   const [togglePassword, setTogglePassword] = useState(false);
   const [role, setRole] = useState("user");
   const [mobile, setMobile] = useState("");
-  let [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const serverUrl = useSelector((state) => state.auth.serverUrl);
+  const { serverUrl, loading } = useSelector((state) => state.auth);
+  const { userData } = useSelector((state) => state.user);
+  const { currentUser } = useCurrentUser();
 
-  console.log(serverUrl);
+  if (loading) return "loading.....";
+
+  if (userData) {
+    return <Navigate to="/" />;
+  }
 
   const handleSingUp = async (e) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
       e.preventDefault();
       // alert("clicked");
@@ -37,16 +44,28 @@ const Signup = () => {
         },
         { withCredentials: true },
       );
-      setLoading(false);
+
+      // console.log(result.data);
+      dispatch(setUserData(result.data.user));
+      dispatch(setLoading(false));
+      <Navigate to="/" />;
       // reset the form
       e.target.fullName.value = "";
       e.target.email.value = "";
       e.target.password.value = "";
       e.target.mobile.value = "";
-      console.log(result);
+
+      // console.log(result);
     } catch (error) {
-      setLoading(false);
-      console.log(error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        dispatch(setLoading(false));
+        alert(error.response.data.message);
+      }
+      // console.error(error);
     }
   };
 
@@ -73,7 +92,8 @@ const Signup = () => {
         { withCredentials: true },
       );
 
-      console.log(data.data.user);
+      dispatch(setUserData(data.data.user));
+      <Navigate to="/" />;
     } catch (error) {
       console.log(error);
     }
