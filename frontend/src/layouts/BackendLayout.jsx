@@ -1,12 +1,13 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Outlet } from "react-router";
 import useGetCity from "../hooks/useGetCity";
 
-const FrontendLayout = () => {
+const BackendLayout = () => {
   useGetCity();
   return (
     <div>
+      <Navbar></Navbar>
       <div>
         <Outlet></Outlet>
       </div>
@@ -14,4 +15,4 @@ const FrontendLayout = () => {
   );
 };
 
-export default FrontendLayout;
+export default BackendLayout;

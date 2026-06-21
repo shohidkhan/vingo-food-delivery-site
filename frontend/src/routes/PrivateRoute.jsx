@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }) => {
   const { currentUser } = useCurrentUser();
   const { userData } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.auth);
-  console.log(userData, loading);
+  // console.log(userData, loading);
   if (loading) return "loading.....";
   if (!userData) return <Navigate to="/signin" />;
   return children;

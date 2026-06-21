@@ -2,27 +2,42 @@ import React, { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
 import { PiShoppingCart } from "react-icons/pi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RxCross2 } from "react-icons/rx";
+import axios from "axios";
+import { setUserData } from "../redux/userSlice";
 
 const Navbar = () => {
-  const { userData } = useSelector((state) => state.user);
-  const { loading } = useSelector((state) => state.auth);
+  const { userData, city } = useSelector((state) => state.user);
+  const { serverUrl, loading } = useSelector((state) => state.auth);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleLogOut = async () => {
+    try {
+      const result = await axios.get(`${serverUrl}/auth/signout`, {
+        withCredentials: true,
+      });
+      dispatch(setUserData(null));
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // if (loading) return "loading.....";
-  console.log(userData);
+  // console.log(userData);
   return (
     <div className="w-full flex justify-between items-center h-[80px] md:justify-center gap-[30px] px-3 fixed top-0 z-[9999] bg-[#fff9f6] overflow-visible">
       <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Vingo</h1>
       {showSearch && (
         <div className="md:hidden w-[90%] h-[60px] bg-white shadow-xl rounded-[5px] flex justify-between items-center gap-[20px] fixed top-20 left-[5%] z-[9999]">
-          <div className="flex items-center gap-2 w-[30%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
+          <div className="flex items-center gap-2 w-[40%] md:w-[10%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
             <FaLocationDot size={20} className="text-[#ff4d2d]"></FaLocationDot>
-            <div className="w-[80%] truncate text-gray-600">location</div>
+            <div className="w-[80%] truncate text-gray-600">{city}</div>
           </div>
-          <div className="w-[80%] flex items-center gap-[10px]">
+          <div className="w-[60%] md:w-[70%] flex items-center gap-[10px]">
             <IoIosSearch size={20} className="text-[#ff4d2d]"></IoIosSearch>
             <input
               type="text"
@@ -35,11 +50,11 @@ const Navbar = () => {
         </div>
       )}
       <div className="lg:w-[40%] md:[w-60%] h-[60px] bg-white shadow-xl rounded-[5px] flex justify-between items-center gap-[20px] hidden md:flex">
-        <div className="flex items-center gap-2 w-[30%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
+        <div className="flex items-center gap-2 w-[35%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
           <FaLocationDot size={20} className="text-[#ff4d2d]"></FaLocationDot>
-          <div className="w-[80%] truncate text-gray-600">location</div>
+          <div className="w-[80%] truncate text-gray-600">{city}</div>
         </div>
-        <div className="w-[80%] flex items-center gap-[10px]">
+        <div className="w-[65%] flex items-center gap-[10px]">
           <IoIosSearch size={20} className="text-[#ff4d2d]"></IoIosSearch>
           <input
             type="text"
@@ -81,14 +96,17 @@ const Navbar = () => {
           {userData?.fullName.slice(0, 1).toUpperCase()}
         </div>
         {showInfo && (
-          <div className="fixed top-20 right-2.5 md:right-[10%] lg:right-[25%] w-[180px] bg-white shadow-2xl rounded-xl p-5 flex flex-col gap-2.5 z-[99999]">
+          <div className="fixed top-20 right-2.5 md:right-[10%] lg:right-[18%] w-[180px] bg-white shadow-2xl rounded-xl p-5 flex flex-col gap-2.5 z-[99999]">
             <div className="text-base font-semibold cursor-pointer">
               {userData?.fullName}
             </div>
             <div className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer">
               My orders
             </div>
-            <div className="text-sm font-semibold cursor-pointer text-[#ff4d2d]">
+            <div
+              className="text-sm font-semibold cursor-pointer text-[#ff4d2d]"
+              onClick={handleLogOut}
+            >
               Logout
             </div>
           </div>
