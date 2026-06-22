@@ -1,9 +1,7 @@
 import React from "react";
 
 const UserDashboard = () => {
-  return (
-    
-  );
+  return <div>User</div>;
 };
 
 export default UserDashboard;

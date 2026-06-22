@@ -8,9 +8,9 @@ const BackendLayout = () => {
   useGetCity();
   useGetShop();
   return (
-    <div>
+    <div className="min-h-screen">
       <Navbar></Navbar>
-      <div>
+      <div className="mt-[80px]">
         <Outlet></Outlet>
       </div>
     </div>

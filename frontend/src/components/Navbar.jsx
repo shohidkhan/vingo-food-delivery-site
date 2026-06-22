@@ -106,17 +106,21 @@ const Navbar = () => {
 
         {userData.role === "owner" ? (
           <>
-            <div className="flex px-3 gap-2 items-center py-1 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
-              <FaPlus size={15} className="text-[#ff4d2d] "></FaPlus>
-              <span className="hidden md:block">Add Food</span>
-            </div>
-            <div className="flex relative px-3 py-1 items-center gap-2 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
-              <TbReceiptFilled size={15} className="text-[#ff4d2d] " />
-              <span className="hidden md:block"> My Orders</span>
-              <span className="absolute top-[-10px] right-[-10px] w-[20px] h-[20px] bg-[#ff4d2d] text-white flex items-center justify-center rounded-full">
-                0
-              </span>
-            </div>
+            {myShopData && (
+              <>
+                <div className="flex px-3 gap-2 items-center py-1 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
+                  <FaPlus size={15} className="text-[#ff4d2d] "></FaPlus>
+                  <span className="hidden md:block">Add Food</span>
+                </div>
+                <div className="flex relative px-3 py-1 items-center gap-2 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
+                  <TbReceiptFilled size={15} className="text-[#ff4d2d] " />
+                  <span className="hidden md:block"> My Orders</span>
+                  <span className="absolute top-[-10px] right-[-10px] w-[20px] h-[20px] bg-[#ff4d2d] text-white flex items-center justify-center rounded-full">
+                    0
+                  </span>
+                </div>
+              </>
+            )}
           </>
         ) : null}
 
