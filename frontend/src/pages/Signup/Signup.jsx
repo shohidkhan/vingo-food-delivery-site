@@ -68,6 +68,11 @@ const Signup = () => {
       // console.error(error);
     }
   };
+  const roles = [
+    { value: "user", label: "User" },
+    { value: "deliveryBoy", label: "Delivery Boy" },
+    { value: "owner", label: "Owner" },
+  ];
 
   const handleGoogleSignUp = async () => {
     if (!mobile) {
@@ -209,18 +214,18 @@ const Signup = () => {
               Role
             </label>
             <div className="flex gap-2">
-              {["user", "deliveryBoy"].map((r) => (
+              {roles.map((r) => (
                 <button
-                  key={r}
+                  key={r.value}
                   type="button"
-                  onClick={() => setRole(r)}
+                  onClick={() => setRole(r.value)}
                   className={`flex-1 border rounded-xl px-3 py-2 text-center text-sm font-semibold transition-all duration-150 ${
-                    role === r
+                    role === r.value
                       ? "bg-[#FF4C24] text-white border-[#FF4C24] shadow-md shadow-orange-600/10"
                       : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
                   }`}
                 >
-                  {r === "user" ? "User" : "Delivery Boy"}
+                  {r.label}
                 </button>
               ))}
             </div>
