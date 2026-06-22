@@ -1,4 +1,4 @@
-import Shop from "../models/shop.model";
+import Shop from "../models/shop.model.js";
 import uploadOnCloudinary from "../utilities/cloudinary.js";
 
 export const createShop = async (req, res) => {
@@ -62,5 +62,19 @@ export const createEditShop = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(`edit shop error: ${error.message}`);
+  }
+};
+
+export const getShop = async (req, res) => {
+  try {
+    const shop = await Shop.findOne({ owner: req.userId }).populate(
+      "owner items",
+    );
+    if (!shop) {
+      return res.status(404).json({ message: "Shop not found" });
+    }
+    res.status(200).json(shop);
+  } catch (error) {
+    res.status(500).json(`get shop error: ${error.message}`);
   }
 };
