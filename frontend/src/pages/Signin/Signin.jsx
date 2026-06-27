@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { googleSignIn, setLoading } from "../../redux/authSlice.js";
 import { setUserData } from "../../redux/userSlice.js";
 import useCurrentUser from "../../hooks/useCurrentUser.jsx";
+import Loading from "../../components/Loading.jsx";
 
 const Signin = () => {
   const [togglePassword, setTogglePassword] = useState(false);
@@ -17,7 +18,7 @@ const Signin = () => {
   const { userData } = useSelector((state) => state.user);
   const { currentUser } = useCurrentUser();
 
-  if (loading) return "loading.....";
+  if (loading) return <Loading />;
 
   if (userData) {
     return <Navigate to="/" />;

@@ -13,8 +13,8 @@ const useGetShop = () => {
         const result = await axios.get(`${serverUrl}/shop/get-shop`, {
           withCredentials: true,
         });
-        console.log(result);
-        dispatch(setMyShopData(result.data.shop));
+        // console.log(result.data);
+        dispatch(setMyShopData(result.data));
       } catch (error) {
         console.log(error.response.data.message);
       }

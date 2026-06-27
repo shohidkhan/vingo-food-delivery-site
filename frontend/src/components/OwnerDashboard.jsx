@@ -2,14 +2,17 @@ import React from "react";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const OwnerDashboard = () => {
-  const { getMyShopData } = useSelector((state) => state.owner);
+  const { myShopData } = useSelector((state) => state.owner);
+  const { currentCity } = useSelector((state) => state.user);
+  console.log(myShopData);
   return (
     <div>
-      {!getMyShopData && (
+      {!myShopData && (
         <div className="w-full min-h-screen bg-[#fff9f6] flex flex-col items-center">
-          {!getMyShopData && (
+          {!myShopData && (
             <div className="flex justify-center items-center p-4 sm:p-6">
               <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex flex-col items-center text-center">
@@ -21,9 +24,12 @@ const OwnerDashboard = () => {
                     Join our food delivery platform and reach thousands of
                     hungry customers every day.
                   </p>
-                  <button className="bg-[#ff4d2d] mt-5 text-white px-5 sm:px-6 py-2 rounded-full font-medium shadow-md hover:bg-orange-600 transition-colors duration-200">
+                  <Link
+                    to="/create-edit-shop"
+                    className="bg-[#ff4d2d] mt-5 cursor-pointer text-white px-5 sm:px-6 py-2 rounded-full font-medium shadow-md hover:bg-orange-600 transition-colors duration-200"
+                  >
                     Get Started
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

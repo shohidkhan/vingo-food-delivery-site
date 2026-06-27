@@ -47,6 +47,7 @@ export const createEditShop = async (req, res) => {
         image,
         owner: req.userId,
       });
+      res.status(201).json({ message: "Shop created successfully", shop });
     } else {
       shop = await Shop.findByIdAndUpdate(
         shop._id,
@@ -59,6 +60,7 @@ export const createEditShop = async (req, res) => {
         },
         { new: true },
       );
+      res.status(200).json({ message: "Shop edited successfully", shop });
     }
   } catch (error) {
     res.status(500).json(`edit shop error: ${error.message}`);

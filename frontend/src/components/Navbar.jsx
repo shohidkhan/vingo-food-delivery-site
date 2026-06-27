@@ -7,6 +7,7 @@ import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
 import { setUserData } from "../redux/userSlice";
 import { TbReceiptFilled } from "react-icons/tb";
+import Loading from "./Loading";
 
 const Navbar = () => {
   const { userData, city } = useSelector((state) => state.user);
@@ -28,7 +29,7 @@ const Navbar = () => {
     }
   };
 
-  // if (loading) return "loading.....";
+  if (loading) return <Loading />;
   // console.log(userData);
   return (
     <div className="w-full flex justify-between items-center h-[80px] md:justify-center gap-[30px] px-3 fixed top-0 z-[9999] bg-[#fff9f6] overflow-visible">

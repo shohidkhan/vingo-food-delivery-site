@@ -5,6 +5,7 @@ import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import Home from "../pages/Home/Home";
 import PrivateRoute from "./PrivateRoute";
 import BackendLayout from "../layouts/BackendLayout";
+import CreateEditShop from "../pages/CreateEditShop/CreateEditShop";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,16 @@ const router = createBrowserRouter([
         <BackendLayout />
       </PrivateRoute>
     ),
-    children: [{ path: "/", element: <Home /> }],
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/create-edit-shop",
+        element: <CreateEditShop />,
+      },
+    ],
   },
   {
     path: "/signup",
