@@ -60,6 +60,7 @@ export const createEditShop = async (req, res) => {
         },
         { new: true },
       );
+      await shop.populate("owner items");
       res.status(200).json({ message: "Shop edited successfully", shop });
     }
   } catch (error) {

@@ -6,6 +6,7 @@ import Home from "../pages/Home/Home";
 import PrivateRoute from "./PrivateRoute";
 import BackendLayout from "../layouts/BackendLayout";
 import CreateEditShop from "../pages/CreateEditShop/CreateEditShop";
+import Item from "../pages/Item/Item";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "/create-edit-shop",
         element: <CreateEditShop />,
+      },
+      {
+        path: "/add-item",
+        element: <Item />,
       },
     ],
   },
