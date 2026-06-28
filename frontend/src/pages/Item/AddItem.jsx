@@ -1,17 +1,20 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setLoading } from "../../redux/authSlice";
+import Loading from "../../components/Loading";
 
-const Item = () => {
+const AddItem = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [frontendImage, setFrontendImage] = useState(null);
   const [price, setPrice] = useState(0);
   const [category, setCategory] = useState("");
   const [foodType, setFoodType] = useState("");
-  const { serverUrl } = useSelector((state) => state.auth);
+  const { serverUrl, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const [backendImage, setBackendImage] = useState(null);
   const categories = [
@@ -28,6 +31,8 @@ const Item = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // dispatch(setLoading(true));
+      dispatch(setLoading(true));
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", backendImage);
@@ -38,8 +43,11 @@ const Item = () => {
         withCredentials: true,
       });
       console.log(result);
+      dispatch(setLoading(false));
+      navigate("/");
     } catch (error) {
       console.log(error);
+      dispatch(setLoading(false));
     }
   };
   const handleImageChange = async (e) => {
@@ -48,6 +56,8 @@ const Item = () => {
     setBackendImage(file);
     setFrontendImage(URL.createObjectURL(file));
   };
+
+  if (loading) return <Loading />;
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-orange-50 to-rose-50 flex flex-col items-center justify-center p-6">
       <div
@@ -195,4 +205,4 @@ const Item = () => {
   );
 };
 
-export default Item;
+export default AddItem;

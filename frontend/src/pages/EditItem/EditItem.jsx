@@ -1,74 +1,98 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { setMyShopData } from "../../redux/ownerSlice";
+import { setLoading } from "../../redux/authSlice";
+import Loading from "../../components/Loading";
 
-const CreateEditShop = () => {
+const EditItem = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { myShopData } = useSelector((state) => state.owner);
-  const { currentCity, currentState, currentAddress } = useSelector(
-    (state) => state.user,
-  );
-  console.log(myShopData);
-  const { serverUrl } = useSelector((state) => state.auth);
+  const { itemId } = useParams();
+  const [currentItem, setCurrentItem] = useState(null);
   const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  // const navigate=useNavigate();
-
-  // add this after your useState declarations
-  useEffect(() => {
-    if (myShopData) {
-      setName(myShopData.name || "");
-      setCity(myShopData.city || "");
-      setState(myShopData.state || "");
-      setAddress(myShopData.address || "");
-      setFrontendImage(myShopData.image || null);
-    } else {
-      if (currentCity) setCity(currentCity);
-      if (currentState) setState(currentState);
-      if (currentAddress) setAddress(currentAddress);
-    }
-  }, [myShopData, currentCity, currentState, currentAddress]);
   const [frontendImage, setFrontendImage] = useState(null);
-  console.log(name, address, city, state, frontendImage);
+  const [price, setPrice] = useState(0);
+  const [category, setCategory] = useState("");
+  const [foodType, setFoodType] = useState("");
+  const { serverUrl, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const [backendImage, setBackendImage] = useState(null);
-
-  // console.log(city, state, address);
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setBackendImage(file);
-    setFrontendImage(URL.createObjectURL(file));
-  };
-
+  const categories = [
+    "Snacks",
+    "Desserts",
+    "Main Course",
+    "Pizza",
+    "Fast Food",
+    "Chinese",
+    "Bengali",
+    "Drinks",
+    "others",
+  ];
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      dispatch(setLoading(true));
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("address", address);
-      formData.append("city", city);
-      formData.append("state", state);
       formData.append("image", backendImage);
+      formData.append("price", price);
+      formData.append("category", category);
+      formData.append("foodType", foodType);
       const result = await axios.post(
-        `${serverUrl}/shop/create-edit`,
+        `${serverUrl}/item/edit-item/${itemId}`,
         formData,
         {
           withCredentials: true,
         },
       );
       dispatch(setMyShopData(result.data.shop));
-      navigate("/");
+      dispatch(setLoading(false));
       console.log(result);
+      navigate("/");
     } catch (error) {
       console.log(error);
+      dispatch(setLoading(false));
     }
   };
+  const handleImageChange = async (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    setBackendImage(file);
+    setFrontendImage(URL.createObjectURL(file));
+  };
 
+  useEffect(() => {
+    const fetchItem = async () => {
+      try {
+        const result = await axios.get(`${serverUrl}/item/get-item/${itemId}`, {
+          withCredentials: true,
+        });
+
+        setCurrentItem(result.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchItem();
+  }, [serverUrl, itemId]);
+
+  useEffect(() => {
+    if (currentItem) {
+      setName(currentItem.name || "");
+      setPrice(currentItem.price || "");
+      setCategory(currentItem.category || "");
+      setFoodType(currentItem.foodType || "");
+      setFrontendImage(currentItem.image || "");
+    }
+  }, [currentItem]);
+
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-orange-50 to-rose-50 flex flex-col items-center justify-center p-6">
       <div
@@ -101,20 +125,22 @@ const CreateEditShop = () => {
           </div>
 
           <h2 className="text-center text-xl font-semibold text-gray-900 mb-6">
-            {myShopData ? "Edit Shop" : "Create Shop"}
+            Edit Item
             {/* Edit Shop */}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Name</label>
+              <label className="block text-xs text-gray-500 mb-1">
+                Item Name
+              </label>
               <input
                 type="text"
                 name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Shop name"
+                placeholder="Food item name"
                 className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm text-gray-900 outline-none focus:border-[#ff4d2d] focus:ring-2 focus:ring-[#ff4d2d]/10 transition"
               />
             </div>
@@ -122,12 +148,10 @@ const CreateEditShop = () => {
             {/* Shop Image */}
             <div>
               <label className="block text-xs text-gray-500 mb-1">
-                Shop Image
+                Food Image
               </label>
               <label className="flex items-center h-10 border border-gray-300 rounded-lg px-3 text-sm text-gray-400 cursor-pointer hover:border-[#ff4d2d] transition w-full">
-                <span className="truncate">
-                  {myShopData ? myShopData.name : "Choose file  No file chosen"}
-                </span>
+                <span className="truncate">Choose file No file chosen</span>
                 <input
                   type="file"
                   onChange={handleImageChange}
@@ -139,7 +163,7 @@ const CreateEditShop = () => {
                 <div className="mt-2 rounded-lg overflow-hidden h-40 border border-orange-100">
                   <img
                     src={frontendImage}
-                    alt="Shop preview"
+                    alt="food preview"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -149,44 +173,57 @@ const CreateEditShop = () => {
             {/* City & State */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">City</label>
+                <label className="block text-xs text-gray-500 mb-1">
+                  Price
+                </label>
                 <input
-                  type="text"
-                  name="city"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="City"
+                  type="number"
+                  name="price"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="price"
                   className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm text-gray-900 outline-none focus:border-[#ff4d2d] focus:ring-2 focus:ring-[#ff4d2d]/10 transition"
                 />
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
-                  State
+                  Category
                 </label>
-                <input
+                <select
                   type="text"
                   name="state"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
                   placeholder="State"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                   className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm text-gray-900 outline-none focus:border-[#ff4d2d] focus:ring-2 focus:ring-[#ff4d2d]/10 transition"
-                />
+                >
+                  <option value="">Selected Category</option>
+                  {categories.map((category, index) => (
+                    <option value={category} key={index}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             {/* Address */}
             <div>
               <label className="block text-xs text-gray-500 mb-1">
-                Address
+                Food Type
               </label>
-              <input
+              <select
                 type="text"
-                name="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Full address"
+                name="state"
+                placeholder="State"
+                value={foodType}
+                onChange={(e) => setFoodType(e.target.value)}
                 className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm text-gray-900 outline-none focus:border-[#ff4d2d] focus:ring-2 focus:ring-[#ff4d2d]/10 transition"
-              />
+              >
+                <option value="">Selected food type</option>
+                <option value="veg">Veg</option>
+                <option value="non-veg">Non-Veg</option>
+              </select>
             </div>
 
             {/* Save Button */}
@@ -203,4 +240,4 @@ const CreateEditShop = () => {
   );
 };
 
-export default CreateEditShop;
+export default EditItem;

@@ -1,9 +1,10 @@
 import React from "react";
-import Navbar from "./Navbar";
+
 import { useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { TbMoodEdit } from "react-icons/tb";
+import OwnerItemCard from "../pages/OwnerItemCard/OwnerItemCard";
 
 const OwnerDashboard = () => {
   const { myShopData } = useSelector((state) => state.owner);
@@ -104,6 +105,13 @@ const OwnerDashboard = () => {
                   </Link>
                 </div>
               </div>
+            </div>
+          )}
+          {myShopData.items.length > 0 && (
+            <div className="grid max-w-7xl mx-auto grid-cols-1 mt-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-4">
+              {myShopData.items.map((item) => (
+                <OwnerItemCard key={item._id} data={item} />
+              ))}
             </div>
           )}
         </div>

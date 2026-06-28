@@ -33,17 +33,13 @@ export const storeItem = async (req, res) => {
 
 export const editItem = async (req, res) => {
   try {
-    const itemId = req.params.id;
+    const itemId = req.params.itemId;
     const { name, category, price, foodType } = req.body;
     let image;
     if (req.file) {
       image = await uploadOnCloudinary(req.file.path);
     }
-    const shop = await Shop.findOne({ owner: req.userId });
-
-    if (!shop) {
-      return res.status(404).json({ message: "Shop not found" });
-    }
+    console.log(image, category, foodType, name, price);
 
     const item = await Item.findByIdAndUpdate(itemId, {
       name,
@@ -52,13 +48,52 @@ export const editItem = async (req, res) => {
       foodType,
       image,
     });
+    console.log(item);
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
     }
 
-    res.status(200).json({ message: "Item edited successfully", item });
+    const shop = await Shop.findOne({ owner: req.userId }).populate("items");
+
+    res.status(200).json(shop);
   } catch (error) {
     res.status(500).json(`edit item error: ${error.message}`);
+  }
+};
+
+export const getItemById = async (req, res) => {
+  try {
+    const itemId = req.params.itemId;
+    const item = await Item.findById(itemId);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    res.status(200).json(item);
+  } catch (error) {
+    res.status(500).json(`get item error: ${error.message}`);
+  }
+};
+
+export const deleteItem = async (req, res) => {
+  try {
+    const itemId = req.params.itemId;
+    const item = await Item.findByIdAndDelete(itemId);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    let shop = await Shop.findOne({ owner: req.userId });
+
+    shop.items = shop.items.filter((i) => i._id.toString() !== itemId);
+    await shop.save();
+    await shop.populate({
+      path: "items",
+      options: { sort: { updatedAt: -1 } },
+    });
+
+    res.status(200).json(shop);
+  } catch (error) {
+    res.status(500).json(`delete item error: ${error.message}`);
   }
 };

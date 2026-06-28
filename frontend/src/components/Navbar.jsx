@@ -8,7 +8,7 @@ import axios from "axios";
 import { setUserData } from "../redux/userSlice";
 import { TbReceiptFilled } from "react-icons/tb";
 import Loading from "./Loading";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { userData, city } = useSelector((state) => state.user);
@@ -17,6 +17,7 @@ const Navbar = () => {
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogOut = async () => {
     try {
@@ -110,11 +111,12 @@ const Navbar = () => {
           <>
             {myShopData && (
               <>
-                <div className="flex px-3 gap-2 items-center py-1 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
+                <div
+                  onClick={() => navigate("/add-item")}
+                  className="flex px-3 gap-2 items-center cursor-pointer py-1 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg"
+                >
                   <FaPlus size={15} className="text-[#ff4d2d] "></FaPlus>
-                  <Link to="/add-item" className="hidden md:block">
-                    Add Food
-                  </Link>
+                  <Link className="hidden md:block">Add Food</Link>
                 </div>
                 <div className="flex relative px-3 py-1 items-center gap-2 text-[12px] text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
                   <TbReceiptFilled size={15} className="text-[#ff4d2d] " />
