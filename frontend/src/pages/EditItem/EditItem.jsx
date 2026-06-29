@@ -18,7 +18,7 @@ const EditItem = () => {
   const [foodType, setFoodType] = useState("");
   const { serverUrl, loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
+  const { userData } = useSelector((state) => state.user);
   const [backendImage, setBackendImage] = useState(null);
   const categories = [
     "Snacks",
@@ -89,6 +89,12 @@ const EditItem = () => {
       setFrontendImage(currentItem.image || "");
     }
   }, [currentItem]);
+
+  useEffect(() => {
+    if (userData?.role !== "owner") {
+      navigate("/");
+    }
+  }, [userData, navigate]);
 
   if (loading) {
     return <Loading />;

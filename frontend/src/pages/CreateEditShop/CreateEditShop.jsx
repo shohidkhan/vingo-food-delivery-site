@@ -12,6 +12,7 @@ const CreateEditShop = () => {
   const { currentCity, currentState, currentAddress } = useSelector(
     (state) => state.user,
   );
+  const { userData } = useSelector((state) => state.user);
   console.log(myShopData);
   const { serverUrl } = useSelector((state) => state.auth);
   const [name, setName] = useState("");
@@ -68,6 +69,11 @@ const CreateEditShop = () => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (userData?.role !== "owner") {
+      navigate("/");
+    }
+  }, [userData, navigate]);
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-orange-50 to-rose-50 flex flex-col items-center justify-center p-6">

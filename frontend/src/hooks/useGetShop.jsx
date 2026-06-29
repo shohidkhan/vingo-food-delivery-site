@@ -16,7 +16,7 @@ const useGetShop = () => {
         // console.log(result.data);
         dispatch(setMyShopData(result.data));
       } catch (error) {
-        console.log(error.response.data.message);
+        // console.log(error.response.data.message);
       }
     };
     fetchShop();

@@ -8,7 +8,7 @@ import OwnerDashboard from "../../components/OwnerDashboard.jsx";
 
 const Home = () => {
   const { userData } = useSelector((state) => state.user);
-  console.log(userData);
+  // console.log(userData);
   if (!userData) return <Navigate to="/signin" />;
   const dashboardMap = {
     owner: <OwnerDashboard />,

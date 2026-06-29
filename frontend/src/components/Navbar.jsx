@@ -11,13 +11,17 @@ import Loading from "./Loading";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { userData, city } = useSelector((state) => state.user);
+  const { userData, currentCity, currentAddress } = useSelector(
+    (state) => state.user,
+  );
   const { serverUrl, loading } = useSelector((state) => state.auth);
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showLocation, setShowLocation] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(currentCity);
 
   const handleLogOut = async () => {
     try {
@@ -40,7 +44,26 @@ const Navbar = () => {
         <div className="md:hidden w-[90%] h-[60px] bg-white shadow-xl rounded-[5px] flex justify-between items-center gap-[20px] fixed top-20 left-[5%] z-[9999]">
           <div className="flex items-center gap-2 w-[40%] md:w-[10%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
             <FaLocationDot size={20} className="text-[#ff4d2d]"></FaLocationDot>
-            <div className="w-[80%] truncate text-gray-600">{city}</div>
+            <div
+              onClick={() => setShowLocation(true)}
+              className="w-[80%] truncate text-gray-600 cursor-pointer"
+            >
+              {currentAddress}
+            </div>
+            {showLocation && (
+              <div className="absolute py-10 top-[60px] left-[10px] max-w-xl left-0 w-full bg-white shadow-xl rounded-[5px] z-[9999]">
+                <div className="flex items-center gap-2 w-[100%] overflow-hidden gap-[10px] px-[10px] ">
+                  <RxCross2
+                    onClick={() => setShowLocation(false)}
+                    size={20}
+                    className="text-[#ff4d2d] cursor-pointer"
+                  ></RxCross2>
+                  <div className="w-[100%]  text-gray-600">
+                    {currentAddress}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className="w-[60%] md:w-[70%] flex items-center gap-[10px]">
             <IoIosSearch size={20} className="text-[#ff4d2d]"></IoIosSearch>
@@ -56,9 +79,28 @@ const Navbar = () => {
       )}
       {userData.role === "user" && (
         <div className="lg:w-[40%] md:[w-60%] h-[60px] bg-white shadow-xl rounded-[5px] flex justify-between items-center gap-[20px] hidden md:flex">
-          <div className="flex items-center gap-2 w-[35%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
+          <div className="flex  items-center gap-2 w-[35%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
             <FaLocationDot size={20} className="text-[#ff4d2d]"></FaLocationDot>
-            <div className="w-[80%] truncate text-gray-600">{city}</div>
+            <div
+              onClick={() => setShowLocation(true)}
+              className="w-[80%] cursor-pointer truncate text-gray-600"
+            >
+              {currentAddress}
+            </div>
+            {showLocation && (
+              <div className="absolute py-10 top-[60px] left-[336px] max-w-xl left-0 w-full bg-white shadow-2xl rounded-[5px] z-[9999]">
+                <div className="flex items-center gap-2 w-[100%] overflow-hidden gap-[10px] px-[10px] ">
+                  <RxCross2
+                    onClick={() => setShowLocation(false)}
+                    size={20}
+                    className="text-[#ff4d2d] cursor-pointer"
+                  ></RxCross2>
+                  <div className="w-[100%]  text-gray-600">
+                    {currentAddress}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className="w-[65%] flex items-center gap-[10px]">
             <IoIosSearch size={20} className="text-[#ff4d2d]"></IoIosSearch>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,14 @@ const AddItem = () => {
   const [category, setCategory] = useState("");
   const [foodType, setFoodType] = useState("");
   const { serverUrl, loading } = useSelector((state) => state.auth);
+  const { userData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
   const [backendImage, setBackendImage] = useState(null);
+  useEffect(() => {
+    if (userData?.role !== "owner") {
+      navigate("/");
+    }
+  }, [userData, navigate]);
   const categories = [
     "Snacks",
     "Desserts",
@@ -58,6 +63,7 @@ const AddItem = () => {
   };
 
   if (loading) return <Loading />;
+
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-orange-50 to-rose-50 flex flex-col items-center justify-center p-6">
       <div
