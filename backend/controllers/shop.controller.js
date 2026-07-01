@@ -81,3 +81,16 @@ export const getShop = async (req, res) => {
     res.status(500).json(`get shop error: ${error.message}`);
   }
 };
+
+export const getShopByCity = async (req, res) => {
+  try {
+    const { city } = req.params;
+    const shop = await Shop.find({ city }).populate("owner items");
+    if (!shop) {
+      return res.status(404).json({ message: "Shop not found" });
+    }
+    res.status(200).json(shop);
+  } catch (error) {
+    res.status(500).json(`get shop by city error: ${error.message}`);
+  }
+};

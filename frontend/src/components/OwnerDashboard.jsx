@@ -62,11 +62,11 @@ const OwnerDashboard = () => {
                 />
                 <button
                   onClick={() => navigate("/create-edit-shop")}
-                  className="absolute top-3 right-3 bg-[#ff4d2d] p-1.5 rounded-full shadow-md hover:bg-white transition cursor-pointer"
+                  className="group absolute top-3 right-3 bg-[#ff4d2d] p-1.5 rounded-full shadow-md hover:bg-white transition cursor-pointer"
                 >
                   <TbMoodEdit
                     size={16}
-                    className="text-white hover:text-[#ff4d2d]"
+                    className="text-white transition-colors group-hover:text-[#ff4d2d]"
                   />
                 </button>
               </div>
