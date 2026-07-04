@@ -4,11 +4,13 @@ import Navbar from "../components/Navbar";
 import useGetCity from "../hooks/useGetCity";
 import useGetShop from "../hooks/useGetShop";
 import useShopByCity from "../hooks/useShopByCity";
+import useGetItemByCity from "../hooks/useGetItemByCity";
 
 const BackendLayout = () => {
   useGetCity();
   useGetShop();
   useShopByCity();
+  useGetItemByCity();
   return (
     <div className="min-h-screen">
       <Navbar></Navbar>

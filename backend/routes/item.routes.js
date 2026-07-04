@@ -2,6 +2,7 @@ import express from "express";
 import {
   deleteItem,
   editItem,
+  getItemByCity,
   getItemById,
   storeItem,
 } from "../controllers/item.controller.js";
@@ -21,5 +22,6 @@ itemRouter.post(
 itemRouter.post("/edit-item/:itemId", isAuth, upload.single("image"), editItem);
 itemRouter.get("/get-item/:itemId", isAuth, getItemById);
 itemRouter.delete("/delete-item/:itemId", isAuth, deleteItem);
+itemRouter.get("/get-item-by-city/:city", isAuth, getItemByCity);
 
 export default itemRouter;

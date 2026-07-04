@@ -97,3 +97,20 @@ export const deleteItem = async (req, res) => {
     res.status(500).json(`delete item error: ${error.message}`);
   }
 };
+
+export const getItemByCity = async (req, res) => {
+  try {
+    const city = req.params.city;
+    const shops = await Shop.find({ city }).populate("items");
+    if (!shops) {
+      return res.status(404).json({ message: "Shops not found" });
+    }
+    const shopIds = shops.map((shop) => shop._id);
+    const items = await Item.find({
+      shop: { $in: shopIds },
+    });
+    res.status(200).json({ shops, items });
+  } catch (error) {
+    res.status(500).json(`get item by city error: ${error.message}`);
+  }
+};

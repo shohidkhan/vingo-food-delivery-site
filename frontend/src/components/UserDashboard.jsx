@@ -3,12 +3,13 @@ import { categories } from "../categories.js";
 import CategoryCard from "./CategoryCard";
 import { useSelector } from "react-redux";
 import ShopCard from "./ShopCard.jsx";
+import GetItemByCity from "./GetItemByCity.jsx";
 
 const UserDashboard = () => {
   const scrollContainerRef = useRef(null);
   const scrollShopContainerRef = useRef(null);
   const { currentCity } = useSelector((state) => state.user);
-  const { getShopByCity } = useSelector((state) => state.owner);
+  const { getShopByCity, getItemByCity } = useSelector((state) => state.owner);
 
   // Track button visibility states
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -233,6 +234,15 @@ const UserDashboard = () => {
         <h2 className="text-md md:text-xl font-semibold text-gray-800 mb-6">
           Suggested Food Items
         </h2>
+        <div
+          className="flex gap-4 overflow-x-auto scrollbar-none py-2 w-full scroll-smooth snap-x"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {getItemByCity &&
+            getItemByCity.map((item) => (
+              <GetItemByCity key={item._id} item={item} />
+            ))}
+        </div>
       </div>
     </div>
   );

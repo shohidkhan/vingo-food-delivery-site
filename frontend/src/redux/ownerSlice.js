@@ -5,6 +5,7 @@ const ownerSlice = createSlice({
   initialState: {
     myShopData: null,
     getShopByCity: null,
+    getItemByCity: null,
   },
   reducers: {
     setMyShopData: (state, action) => {
@@ -13,8 +14,12 @@ const ownerSlice = createSlice({
     setGetShopByCity: (state, action) => {
       state.getShopByCity = action.payload;
     },
+    setGetItemByCity: (state, action) => {
+      state.getItemByCity = action.payload;
+    },
   },
 });
 
-export const { setMyShopData, setGetShopByCity } = ownerSlice.actions;
+export const { setMyShopData, setGetShopByCity, setGetItemByCity } =
+  ownerSlice.actions;
 export default ownerSlice.reducer;

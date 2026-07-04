@@ -21,7 +21,7 @@ const Navbar = () => {
   const [showLocation, setShowLocation] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(currentCity);
+  // console.log(currentCity);
 
   const handleLogOut = async () => {
     try {
@@ -29,7 +29,7 @@ const Navbar = () => {
         withCredentials: true,
       });
       dispatch(setUserData(null));
-      console.log(result);
+      // console.log(result);
     } catch (error) {
       console.log(error);
     }

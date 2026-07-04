@@ -17,7 +17,7 @@ const useShopByCity = () => {
             withCredentials: true,
           },
         );
-        console.log(result);
+        // console.log(result);
         dispatch(setGetShopByCity(result.data));
       } catch (error) {
         console.error("Error fetching shops by city:", error);
