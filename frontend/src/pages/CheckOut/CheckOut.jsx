@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FiMapPin, FiPhone } from "react-icons/fi";
+import { IoSearchOutline } from "react-icons/io5";
+import { TbCurrentLocation } from "react-icons/tb";
+
+import {
+  FiMapPin,
+  FiPhone,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 import { FaCashRegister } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 
@@ -14,6 +22,7 @@ const CheckOut = () => {
   //   console.log(userData);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loading, setLoading] = useState(false);
+  const [locationInput, setLocationInput] = useState(currentAddress || "");
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -79,42 +88,56 @@ const CheckOut = () => {
         {/* Main Checkout Section */}
         <div className="space-y-5">
           {/* Delivery Location */}
-          <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm">
-            <div className="mb-4 flex items-center gap-2">
-              <div className="rounded-full bg-orange-100 p-2 text-[#ff4d2d]">
-                <FiMapPin size={20} />
+          <div className="rounded-2xl border border-orange-100 bg-white shadow-sm overflow-hidden">
+            {/* Header with Location Info */}
+            <div className="bg-white px-5 py-4 border-b border-gray-100">
+              <div className=" flex gap-4 my-4 p-1.5 text-[#ff4d2d]">
+                <FiMapPin size={18} />
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Delivery Location
+                </p>
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                Delivery Location
-              </h2>
+              <div className="flex gap-1 items-center justify-between">
+                <input
+                  type="text"
+                  value={locationInput}
+                  onChange={(e) => setLocationInput(e.target.value)}
+                  placeholder="Enter delivery address"
+                  className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-1.5 text-sm font-medium outline-none transition focus:border-[#ff4d2d] placeholder:text-gray-400"
+                />
+
+                <button className="p-2 cursor-pointer rounded-md bg-[#ff4d2d] text-white hover:bg-[#e63e1f] transition">
+                  <IoSearchOutline size={16} />
+                </button>
+                <button className="p-2 cursor-pointer rounded-md bg-blue-500 text-white hover:bg-blue-600 transition">
+                  <TbCurrentLocation size={16} />
+                </button>
+              </div>
             </div>
 
-            {/* Map Placeholder */}
-            <div className="mb-3 h-40 w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
-              <div className="flex h-full items-center justify-center">
-                <div className="text-center">
-                  <FiMapPin size={24} className="mx-auto mb-2 text-gray-400" />
-                  <p className="text-xs text-gray-500">Map location preview</p>
+            {/* Map Area */}
+            <div className="relative h-56 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
+              <div className="text-center pointer-events-none">
+                <FiMapPin size={48} className="mx-auto mb-3 text-gray-300" />
+                <p className="text-sm text-gray-400">Map view</p>
+              </div>
+
+              {/* Location Pin */}
+              {currentAddress && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-5xl drop-shadow-lg">📍</div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Address Display */}
-            <div className="rounded-lg bg-orange-50 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#ff4d2d]">
-                Delivery Address
-              </p>
-              <p className="mt-1 text-sm font-medium text-gray-800">
-                {currentAddress || "No address selected"}
-              </p>
-            </div>
+            {/* Address Input Section */}
 
             {/* Contact Info */}
-            <div className="mt-4 flex items-center gap-3">
+            <div className="px-5 py-4 border-t border-gray-100 flex items-center gap-3">
               <div className="rounded-full bg-orange-100 p-2 text-[#ff4d2d]">
                 <FiPhone size={16} />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-xs text-gray-500">Contact Number</p>
                 <p className="font-semibold text-gray-800">
                   {userData?.mobile || "Not provided"}
