@@ -10,6 +10,7 @@ import CreateEditShop from "../pages/CreateEditShop/CreateEditShop";
 import AddItem from "../pages/Item/AddItem";
 import EditItem from "../pages/EditItem/EditItem";
 import Cart from "../pages/Cart/Cart";
+import CheckOut from "../pages/CheckOut/CheckOut";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/carts",
         element: <Cart />,
+      },
+      {
+        path: "/checkout",
+        element: <CheckOut />,
       },
     ],
   },

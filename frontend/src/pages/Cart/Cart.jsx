@@ -109,7 +109,10 @@ const Cart = () => {
                 </div>
               </div>
 
-              <button className="mt-6 w-full rounded-full bg-[#ff4d2d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#e63e1f]">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="mt-6 w-full rounded-full bg-[#ff4d2d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#e63e1f]"
+              >
                 Proceed to checkout
               </button>
             </div>

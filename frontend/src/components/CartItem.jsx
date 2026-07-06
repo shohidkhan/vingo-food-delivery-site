@@ -17,11 +17,11 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
           <div className="flex items-start justify-between gap-2">
             <div>
               <h3 className="text-base font-semibold capitalize text-gray-800">
-                {item.name}
+                {item.name} ({item.foodType || "Freshly prepared"})
               </h3>
-              <p className="mt-0.5 text-sm text-gray-500">
-                {item.foodType || "Freshly prepared"}
-              </p>
+              {/* <p className="mt-0.5 text-sm text-gray-500">
+                
+              </p> */}
               <p className="mt-1 text-sm font-semibold text-[#ff4d2d]">
                 ৳{item.price}
               </p>
