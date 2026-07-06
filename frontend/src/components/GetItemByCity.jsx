@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../redux/userSlice";
 
 const GetItemByCity = ({ item }) => {
   const [quantity, setQuantity] = useState(0);
+  const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.user);
   const renderStart = (rating) => {
     const starts = [];
     for (let i = 1; i <= 5; i++) {
@@ -90,7 +94,24 @@ const GetItemByCity = ({ item }) => {
               +
             </button>
             {/* Orange Cart CTA */}
-            <button className="bg-[#f04f35] hover:bg-[#e03f26] h-full px-2 flex items-center justify-center text-white transition-colors duration-150">
+            <button
+              className={`${cartItems.some((cartItem) => cartItem.id === item._id) ? "bg-gray-800" : "bg-[#f04f35]"} cursor-pointer hover:bg-[#e03f26] h-full px-2 flex items-center justify-center text-white transition-colors duration-150`}
+              onClick={() =>
+                quantity > 0
+                  ? dispatch(
+                      addToCart({
+                        id: item._id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: quantity,
+                        image: item.image,
+                        shop: item.shop,
+                        foodType: item.foodType,
+                      }),
+                    )
+                  : null
+              }
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-3 w-3"

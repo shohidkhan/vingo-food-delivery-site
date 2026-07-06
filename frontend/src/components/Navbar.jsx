@@ -14,6 +14,7 @@ const Navbar = () => {
   const { userData, currentCity, currentAddress } = useSelector(
     (state) => state.user,
   );
+
   const { serverUrl, loading } = useSelector((state) => state.auth);
   const { myShopData } = useSelector((state) => state.owner);
   const [showInfo, setShowInfo] = useState(false);
@@ -21,6 +22,7 @@ const Navbar = () => {
   const [showLocation, setShowLocation] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { cartItems } = useSelector((state) => state.user);
   // console.log(currentCity);
 
   const handleLogOut = async () => {
@@ -131,13 +133,16 @@ const Navbar = () => {
             ></IoIosSearch>
           ))}
         {userData.role === "user" && (
-          <div className="relative cursor-pointer">
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/carts")}
+          >
             <PiShoppingCart
               size={30}
               className="text-[#ff4d2d]"
             ></PiShoppingCart>
             <span className="text-[#ff4d2d] absolute top-[-10px] right-[-10px]">
-              0
+              {cartItems.length}
             </span>
           </div>
         )}

@@ -16,7 +16,7 @@ const useGetItemByCity = () => {
             withCredentials: true,
           },
         );
-        console.log(result);
+        // console.log(result);
         dispatch(setGetItemByCity(result.data.items));
       } catch (error) {
         console.error("Error fetching items by city:", error);
