@@ -5,14 +5,14 @@ const mapSlice = createSlice({
   initialState: {
     location: {
       lat: null,
-      long: null,
+      lng: null,
     },
     address: null,
   },
   reducers: {
     setLocation: (state, action) => {
-      const { lat, long } = action.payload;
-      state.location = { lat, long };
+      const { lat, lng } = action.payload;
+      state.location = { lat, lng };
     },
     setAddress: (state, action) => {
       state.address = action.payload;

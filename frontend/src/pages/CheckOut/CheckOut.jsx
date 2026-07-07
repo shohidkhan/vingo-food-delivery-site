@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
-
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import {
   FiMapPin,
   FiPhone,
@@ -12,6 +12,10 @@ import {
 } from "react-icons/fi";
 import { FaCashRegister } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
+
+import "leaflet/dist/leaflet.css";
+import { setAddress, setLocation } from "../../redux/mapSlice";
+import axios from "axios";
 
 const CheckOut = () => {
   const navigate = useNavigate();
@@ -22,8 +26,7 @@ const CheckOut = () => {
   //   console.log(userData);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loading, setLoading] = useState(false);
-  const [locationInput, setLocationInput] = useState(currentAddress || "");
-
+  const { location, address } = useSelector((state) => state.map);
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
@@ -54,6 +57,48 @@ const CheckOut = () => {
     } finally {
       setLoading(false);
     }
+  };
+  const [markerLocation, setMarkerLocation] = useState({
+    lat: location.lat,
+    lng: location.lng,
+  });
+
+  useEffect(() => {
+    setMarkerLocation({ lat: location.lat, lng: location.lng });
+  }, [location.lat, location.lng]);
+  const RecenterMap = () => {
+    const map = useMap();
+    map.setView([location.lat, location.lng], 16, { animate: true });
+  };
+  const onDragEnd = (event) => {
+    // console.log(event);
+    const marker = event.target;
+    const position = marker.getLatLng();
+    setMarkerLocation({ lat: position.lat, lng: position.lng });
+    dispatch(setLocation({ lat: position.lat, lng: position.lng }));
+    getAddressByLatLng(position.lat, position.lng);
+    // console.log("Marker dragged to:", position);
+  };
+
+  const getAddressByLatLng = async (lat, lng) => {
+    try {
+      const result = await axios.get(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${import.meta.env.VITE_GEOAPIKEY}`,
+      );
+      console.log(result?.data?.results[0]?.address_line2);
+      dispatch(setAddress(result?.data?.results[0]?.address_line2));
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  };
+
+  const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      //   console.log(position);
+      const { latitude, longitude } = position.coords;
+      dispatch(setLocation({ lat: latitude, lng: longitude }));
+      await getAddressByLatLng(latitude, longitude);
+    });
   };
 
   if (cartItems.length === 0) {
@@ -100,8 +145,7 @@ const CheckOut = () => {
               <div className="flex gap-1 items-center justify-between">
                 <input
                   type="text"
-                  value={locationInput}
-                  onChange={(e) => setLocationInput(e.target.value)}
+                  value={address}
                   placeholder="Enter delivery address"
                   className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-1.5 text-sm font-medium outline-none transition focus:border-[#ff4d2d] placeholder:text-gray-400"
                 />
@@ -109,26 +153,36 @@ const CheckOut = () => {
                 <button className="p-2 cursor-pointer rounded-md bg-[#ff4d2d] text-white hover:bg-[#e63e1f] transition">
                   <IoSearchOutline size={16} />
                 </button>
-                <button className="p-2 cursor-pointer rounded-md bg-blue-500 text-white hover:bg-blue-600 transition">
+                <button
+                  onClick={getCurrentLocation}
+                  className="p-2 cursor-pointer rounded-md bg-blue-500 text-white hover:bg-blue-600 transition"
+                >
                   <TbCurrentLocation size={16} />
                 </button>
+              </div>
+              <div className="rounded-xl mt-4 overflow-hidden border border-gray-200">
+                <div className="flex justify-center items-center w-full h-56">
+                  <MapContainer
+                    className={"w-full h-full"}
+                    center={[markerLocation.lat, markerLocation.lng]}
+                    zoom={16}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <RecenterMap location={location} />
+                    <Marker
+                      position={[markerLocation.lat, markerLocation.lng]}
+                      draggable={true}
+                      eventHandlers={{ dragend: onDragEnd }}
+                    />
+                  </MapContainer>
+                </div>
               </div>
             </div>
 
             {/* Map Area */}
-            <div className="relative h-56 w-full bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
-              <div className="text-center pointer-events-none">
-                <FiMapPin size={48} className="mx-auto mb-3 text-gray-300" />
-                <p className="text-sm text-gray-400">Map view</p>
-              </div>
-
-              {/* Location Pin */}
-              {currentAddress && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="text-5xl drop-shadow-lg">📍</div>
-                </div>
-              )}
-            </div>
 
             {/* Address Input Section */}
 
