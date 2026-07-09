@@ -4,13 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import {
-  FiMapPin,
-  FiPhone,
-  FiChevronLeft,
-  FiChevronRight,
-} from "react-icons/fi";
-import { FaCashRegister } from "react-icons/fa";
+import { FiMapPin, FiPhone } from "react-icons/fi";
+import { FaCodepen } from "react-icons/fa";
 import { SiVisa } from "react-icons/si";
 
 import "leaflet/dist/leaflet.css";
@@ -23,8 +18,9 @@ const CheckOut = () => {
   const { cartItems, currentAddress, userData } = useSelector(
     (state) => state.user,
   );
+  const { serverUrl } = useSelector((state) => state.auth);
   //   console.log(userData);
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [loading, setLoading] = useState(false);
   const { location, address } = useSelector((state) => state.map);
   const [addressInput, setAddressInput] = useState("");
@@ -32,33 +28,10 @@ const CheckOut = () => {
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
-  const deliveryFee = 0; // Free delivery
+  // console.log(parseInt(subtotal) < 500 ? "delivery fee lgbe na" : "lgbe");
+  const deliveryFee = subtotal > 500 ? 0 : 50; // Free delivery
   const total = subtotal + deliveryFee;
 
-  const handlePlaceOrder = async () => {
-    if (!currentAddress) {
-      alert("Please select a delivery location");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Order placement logic will be added here
-      console.log({
-        items: cartItems,
-        paymentMethod,
-        deliveryAddress: currentAddress,
-        total,
-      });
-      // After successful order, clear cart and redirect
-      // dispatch(clearCart());
-      // navigate("/order-success");
-    } catch (error) {
-      console.error("Order placement failed:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   const [markerLocation, setMarkerLocation] = useState({
     lat: location.lat,
     lng: location.lng,
@@ -112,6 +85,30 @@ const CheckOut = () => {
       dispatch(setLocation({ lat: latitude, lng: longitude }));
       await getAddressByLatLng(latitude, longitude);
     });
+  };
+
+  const handlePlaceOrder = async () => {
+    try {
+      const result = await axios.post(
+        `${serverUrl}/order/place-order`,
+        {
+          items: cartItems,
+          paymentMethod,
+          deliveryAddress: {
+            text: addressInput,
+            latitude: location.lat,
+            longitude: location.lng,
+          },
+          cartItems,
+          deliveryFee,
+        },
+        { withCredentials: true },
+      );
+
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -233,31 +230,30 @@ const CheckOut = () => {
             </h2>
 
             <div className="grid grid-cols-2 gap-3">
-              {/* Cash on Delivery */}
+              {/* cod on Delivery */}
               <label
                 className="flex cursor-pointer items-center gap-2 rounded-xl border-2 p-3 transition"
                 style={{
-                  borderColor: paymentMethod === "cash" ? "#ff4d2d" : "#e5e7eb",
+                  borderColor: paymentMethod === "cod" ? "#ff4d2d" : "#e5e7eb",
                   backgroundColor:
-                    paymentMethod === "cash" ? "#fff9f6" : "#ffffff",
+                    paymentMethod === "cod" ? "#fff9f6" : "#ffffff",
                 }}
               >
                 <input
                   type="radio"
                   name="payment"
-                  value="cash"
-                  checked={paymentMethod === "cash"}
+                  value="cod"
+                  checked={paymentMethod === "cod"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="h-4 w-4 cursor-pointer"
                 />
                 <div className="flex flex-col">
                   <div className="rounded-full bg-green-100 p-1.5 text-green-600 w-fit">
-                    <FaCashRegister size={16} />
+                    <FaCodepen size={16} />
                   </div>
                   <p className="text-xs font-semibold text-gray-800 mt-1">
-                    Cash
+                    Cash on Delivery
                   </p>
-                  <p className="text-xs text-gray-500">on Delivery</p>
                 </div>
               </label>
 
@@ -318,7 +314,9 @@ const CheckOut = () => {
               </div>
               <div className="flex justify-between text-gray-700">
                 <span>Delivery Fee</span>
-                <span className="font-semibold text-green-600">Free</span>
+                <span className="font-semibold text-green-600">
+                  {subtotal > 500 ? "Free" : "৳50"}
+                </span>
               </div>
               <div className="mt-3 border-t border-gray-200 pt-3 flex justify-between">
                 <span className="font-semibold text-gray-900">Total</span>
@@ -335,7 +333,7 @@ const CheckOut = () => {
             disabled={loading}
             className="w-full rounded-full bg-[#ff4d2d] px-6 py-3 text-center font-semibold text-white shadow-md transition hover:bg-[#e63e1f] disabled:bg-gray-400"
           >
-            {loading ? "Processing..." : "Place Order"}
+            {paymentMethod === "cod" ? "Place Order" : "Pay Now & Place Order"}
           </button>
 
           {/* Back to Cart Link */}
