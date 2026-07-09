@@ -84,6 +84,9 @@ const OwnerOrderCard = ({ data }) => {
               <p className="text-gray-500 flex items-center gap-1">
                 📞 <span>{data.user?.mobile || data.user?.phone || "N/A"}</span>
               </p>
+              <p className="text-gray-500 flex items-center gap-1">
+                📞 <span>{data.deliveryAddress.text}</span>
+              </p>
             </div>
           </div>
 

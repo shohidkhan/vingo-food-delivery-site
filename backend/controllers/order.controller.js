@@ -91,22 +91,33 @@ export const getUserOrders = async (req, res) => {
       const orders = await Order.find({ "shopOrder.owner": req.userId })
         .sort({ createdAt: -1 })
         .populate("shopOrder.shop", "name")
-        .populate("user", "name email mobile") // Added specific fields to keep it compact
+        // Include deliveryAddress, latitude, longitude if stored on the user document
+        .populate(
+          "user",
+          "name email mobile deliveryAddress latitude longitude",
+        )
         .populate("shopOrder.shopOrderItems.item", "name image price");
 
-      // Convert Mongoose documents to plain objects so we can mutate the arrays safely
-      const cleanedOrders = orders.map((order) => {
+      const filterOrders = orders.map((order) => {
+        // 1. Convert Mongoose document to a plain object
         const orderObj = order.toObject();
 
-        // Filter out shopOrders that do NOT belong to this shop owner
-        orderObj.shopOrder = orderObj.shopOrder.filter(
-          (subOrder) => subOrder.owner.toString() === req.userId.toString(),
+        // 2. Filter array instead of using find(), and use .toString() to compare IDs safely
+        const filteredShopOrders = orderObj.shopOrder.filter(
+          (o) => o.owner.toString() === req.userId.toString(),
         );
 
-        return orderObj;
+        return {
+          _id: orderObj._id, // Match frontend expected property (data._id)
+          createdAt: orderObj.createdAt,
+          paymentMethod: orderObj.paymentMethod,
+          deliveryAddress: orderObj.deliveryAddress, // If stored on the order level
+          user: orderObj.user,
+          shopOrder: filteredShopOrders, // Remains an array so .map() works in the component
+        };
       });
 
-      return res.status(200).json(cleanedOrders);
+      return res.status(200).json(filterOrders);
     }
   } catch (error) {
     return res
