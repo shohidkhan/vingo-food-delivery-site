@@ -27,6 +27,7 @@ const CheckOut = () => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loading, setLoading] = useState(false);
   const { location, address } = useSelector((state) => state.map);
+  const [addressInput, setAddressInput] = useState("");
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
@@ -63,9 +64,6 @@ const CheckOut = () => {
     lng: location.lng,
   });
 
-  useEffect(() => {
-    setMarkerLocation({ lat: location.lat, lng: location.lng });
-  }, [location.lat, location.lng]);
   const RecenterMap = () => {
     const map = useMap();
     map.setView([location.lat, location.lng], 16, { animate: true });
@@ -78,6 +76,21 @@ const CheckOut = () => {
     dispatch(setLocation({ lat: position.lat, lng: position.lng }));
     getAddressByLatLng(position.lat, position.lng);
     // console.log("Marker dragged to:", position);
+  };
+
+  const getLatLngByAddress = async (addressInput) => {
+    try {
+      const result = await axios.get(
+        `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+          addressInput,
+        )}&apiKey=${import.meta.env.VITE_GEOAPIKEY}`,
+      );
+      const { lat, lon } = result?.data?.features[0]?.properties;
+      dispatch(setLocation({ lat, lng: lon }));
+      console.log(lat, lon);
+    } catch (error) {
+      console.error("Error fetching latitude and longitude:", error);
+    }
   };
 
   const getAddressByLatLng = async (lat, lng) => {
@@ -100,6 +113,15 @@ const CheckOut = () => {
       await getAddressByLatLng(latitude, longitude);
     });
   };
+
+  useEffect(() => {
+    setMarkerLocation({ lat: location.lat, lng: location.lng });
+  }, [location.lat, location.lng]);
+  useEffect(() => {
+    if (address) {
+      setAddressInput(address);
+    }
+  }, [address]);
 
   if (cartItems.length === 0) {
     return (
@@ -145,12 +167,16 @@ const CheckOut = () => {
               <div className="flex gap-1 items-center justify-between">
                 <input
                   type="text"
-                  value={address}
+                  value={addressInput}
+                  onChange={(e) => setAddressInput(e.target.value)}
                   placeholder="Enter delivery address"
                   className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-1.5 text-sm font-medium outline-none transition focus:border-[#ff4d2d] placeholder:text-gray-400"
                 />
 
-                <button className="p-2 cursor-pointer rounded-md bg-[#ff4d2d] text-white hover:bg-[#e63e1f] transition">
+                <button
+                  onClick={() => getLatLngByAddress(addressInput)}
+                  className="p-2 cursor-pointer rounded-md bg-[#ff4d2d] text-white hover:bg-[#e63e1f] transition"
+                >
                   <IoSearchOutline size={16} />
                 </button>
                 <button
