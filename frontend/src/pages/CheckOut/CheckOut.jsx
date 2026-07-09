@@ -106,6 +106,7 @@ const CheckOut = () => {
       );
 
       console.log(result);
+      navigate("/order-success");
     } catch (error) {
       console.log(error);
     }

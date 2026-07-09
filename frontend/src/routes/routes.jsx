@@ -11,6 +11,7 @@ import AddItem from "../pages/Item/AddItem";
 import EditItem from "../pages/EditItem/EditItem";
 import Cart from "../pages/Cart/Cart";
 import CheckOut from "../pages/CheckOut/CheckOut";
+import PlaceOrder from "../pages/PlaceOrder/PlaceOrder";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/checkout",
         element: <CheckOut />,
+      },
+      {
+        path: "/order-success",
+        element: <PlaceOrder />,
       },
     ],
   },

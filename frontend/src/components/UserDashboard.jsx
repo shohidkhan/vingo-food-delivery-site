@@ -144,7 +144,7 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="w-screen bg-[#faf0f0] min-h-screen pt-10 pb-16 overflow-x-hidden">
+    <div className="w-full bg-[#faf0f0] min-h-screen pt-10 pb-16 overflow-x-hidden">
       {/* SECTION 1: INSPIRATION/CATEGORIES */}
       <div className="w-full mx-auto max-w-5xl flex flex-col justify-start p-2.5">
         <h2 className="text-md md:text-xl font-semibold text-gray-800 mb-6">
