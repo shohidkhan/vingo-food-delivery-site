@@ -12,6 +12,7 @@ import EditItem from "../pages/EditItem/EditItem";
 import Cart from "../pages/Cart/Cart";
 import CheckOut from "../pages/CheckOut/CheckOut";
 import PlaceOrder from "../pages/PlaceOrder/PlaceOrder";
+import MyOrders from "../pages/MyOrders/MyOrders";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "/order-success",
         element: <PlaceOrder />,
+      },
+      {
+        path: "/my-orders",
+        element: <MyOrders />,
       },
     ],
   },

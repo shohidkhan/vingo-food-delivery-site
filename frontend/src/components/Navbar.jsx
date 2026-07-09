@@ -41,7 +41,9 @@ const Navbar = () => {
   // console.log(userData);
   return (
     <div className="w-full flex justify-between items-center h-[80px] md:justify-center gap-[30px] px-3 fixed top-0 z-[9999] bg-[#fff9f6] overflow-visible">
-      <h1 className="text-3xl font-bold mb-2 text-[#ff4d2d]">Vingo</h1>
+      <Link to="/" className="text-3xl font-bold mb-2 text-[#ff4d2d]">
+        Vingo
+      </Link>
       {showSearch && userData.role === "user" && (
         <div className="md:hidden w-[90%] h-[60px] bg-white shadow-xl rounded-[5px] flex justify-between items-center gap-[20px] fixed top-20 left-[5%] z-[9999]">
           <div className="flex items-center gap-2 w-[40%] md:w-[10%] overflow-hidden gap-[10px] px-[10px] border-r-[2px] border-gray-400">
@@ -148,7 +150,10 @@ const Navbar = () => {
         )}
         {userData.role === "user" && (
           <>
-            <div className="hidden md:block px-3 py-1 text-sm text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg">
+            <div
+              onClick={() => navigate("/my-orders")}
+              className="hidden cursor-pointer md:block px-3 py-1 text-sm text-[#ff4d2d] font-bold bg-[#f7e7e5] rounded-lg"
+            >
               <span>My Orders</span>
             </div>
           </>
@@ -189,7 +194,10 @@ const Navbar = () => {
               {userData?.fullName}
             </div>
             {userData.role === "user" && (
-              <div className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer">
+              <div
+                onClick={() => navigate("/my-orders")}
+                className="md:hidden text-[#ff4d2d] font-semibold cursor-pointer"
+              >
                 My orders
               </div>
             )}

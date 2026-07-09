@@ -5,6 +5,7 @@ const shopOrderItemSchema = new mongoose.Schema(
     item: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Item",
+      required: true,
     },
     name: {
       type: String,
@@ -37,6 +38,17 @@ const shopOrderSchema = new mongoose.Schema(
       required: true,
     },
     shopOrderItems: [shopOrderItemSchema],
+    status: {
+      type: String,
+      enum: [
+        "pending",
+        "delivered",
+        "preparing",
+        "out of delivery",
+        "cancelled",
+      ],
+      default: "pending",
+    },
   },
   { timestamps: true },
 );
