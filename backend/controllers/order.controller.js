@@ -73,10 +73,10 @@ export const placeOrder = async (req, res) => {
 export const getUserOrders = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
-    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     if (user.role === "user") {
       const orders = await Order.find({ user: req.userId })
         .sort({ createdAt: -1 })
@@ -84,16 +84,33 @@ export const getUserOrders = async (req, res) => {
         .populate("shopOrder.owner", "name email mobile")
         .populate("shopOrder.shopOrderItems.item", "name image price");
 
-      res.status(200).json(orders);
-    } else if (user.role === "owner") {
+      return res.status(200).json(orders);
+    }
+
+    if (user.role === "owner") {
       const orders = await Order.find({ "shopOrder.owner": req.userId })
         .sort({ createdAt: -1 })
         .populate("shopOrder.shop", "name")
-        .populate("user")
+        .populate("user", "name email mobile") // Added specific fields to keep it compact
         .populate("shopOrder.shopOrderItems.item", "name image price");
-      res.status(200).json(orders);
+
+      // Convert Mongoose documents to plain objects so we can mutate the arrays safely
+      const cleanedOrders = orders.map((order) => {
+        const orderObj = order.toObject();
+
+        // Filter out shopOrders that do NOT belong to this shop owner
+        orderObj.shopOrder = orderObj.shopOrder.filter(
+          (subOrder) => subOrder.owner.toString() === req.userId.toString(),
+        );
+
+        return orderObj;
+      });
+
+      return res.status(200).json(cleanedOrders);
     }
   } catch (error) {
-    res.status(500).json(`get user orders error: ${error.message}`);
+    return res
+      .status(500)
+      .json({ message: `get user orders error: ${error.message}` });
   }
 };
