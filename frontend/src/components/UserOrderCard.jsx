@@ -2,77 +2,73 @@ import React from "react";
 
 const UserOrderCard = ({ data }) => {
   return (
-    /* Main Card Layout Container */
-    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden mb-6">
+    /* Main Card Layout Container - Minimized vertical margins and padding */
+    <div className="bg-white border border-gray-100 rounded-xl shadow-xs overflow-hidden mb-4">
       {/* === HEADER SECTION === */}
-      <div className="p-4 sm:p-5 border-b border-gray-100 bg-white">
-        <div className="flex flex-row justify-between items-center gap-2">
-          <div>
-            <p className="font-bold text-gray-900 text-sm sm:text-base tracking-tight">
-              order{" "}
-              <span className="text-orange-600">
-                #{data._id?.slice(-6) || data._id}
-              </span>
-            </p>
-            <p className="text-gray-400 text-[11px] sm:text-xs mt-0.5 font-medium">
-              {new Date(data.createdAt).toDateString()}
-            </p>
-          </div>
-          <div className="text-right flex flex-col items-end gap-1.5">
-            <span className="inline-block bg-orange-50 text-orange-600 font-bold text-[10px] px-2 py-0.5 rounded tracking-wider uppercase">
-              {data.paymentMethod || "COD"}
+      <div className="px-3 py-2.5 border-b border-gray-100 bg-white flex justify-between items-center gap-2">
+        <div>
+          <p className="font-bold text-gray-900 text-xs sm:text-sm tracking-tight">
+            order{" "}
+            <span className="text-orange-600">
+              #{data._id?.slice(-6) || data._id}
             </span>
-            <p className="font-bold text-sky-600 text-xs sm:text-sm capitalize tracking-wide">
-              {data?.shopOrder[0]?.status || "pending"}
-            </p>
-          </div>
+          </p>
+          <p className="text-gray-400 text-[10px] sm:text-xs font-medium">
+            {new Date(data.createdAt).toDateString()}
+          </p>
+        </div>
+        <div className="text-right flex flex-col items-end">
+          <span className="inline-block bg-orange-50 text-orange-600 font-bold text-[9px] px-1.5 py-0.5 rounded tracking-wider uppercase">
+            {data.paymentMethod || "COD"}
+          </span>
+          <p className="font-bold text-sky-600 text-[11px] sm:text-xs capitalize tracking-wide mt-0.5">
+            {data?.shopOrder[0]?.status || "pending"}
+          </p>
         </div>
       </div>
 
       {/* === RESTAURANT SECTIONS === */}
-      <div className="p-3 sm:p-5 space-y-4 bg-stone-50/40">
+      <div className="px-2 py-2 space-y-2 bg-stone-50/30">
         {data.shopOrder?.map((order, index) => (
           <div
             key={index}
-            className="bg-white border border-gray-100 rounded-xl p-3 sm:p-4 shadow-sm"
+            className="bg-white border border-gray-50 rounded-lg p-2 shadow-xs"
           >
             {/* Restaurant Title Banner */}
-            <h3 className="font-bold text-gray-800 text-xs sm:text-sm mb-3 border-b border-gray-50 pb-2 flex justify-between items-center">
+            <h3 className="font-bold text-gray-800 text-[11px] sm:text-xs mb-2 border-b border-gray-50 pb-1 flex justify-between items-center">
               <span>{order.shop?.name || "Restaurant Partner"}</span>
-              <span className="text-[10px] text-gray-400 font-normal">
+              <span className="text-[9px] text-gray-400 font-normal">
                 Items: {order.shopOrderItems?.length || 0}
               </span>
             </h3>
 
-            {/* RESPONSIVE LAYOUT ENGINE: 
-                Mobile: Thin, sleek horizontal rows stacked vertically.
-                Desktop (sm:): Changes into a neat, compact grid system. */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+            {/* HIGH-DENSITY GRID: Ultra-small profile image layouts */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5 w-full">
               {order.shopOrderItems?.map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-0 border border-gray-50 sm:border-gray-100 rounded-lg p-2 sm:p-0 overflow-hidden bg-white shadow-2xl shadow-transparent hover:border-orange-200 transition-colors"
+                  className="flex items-center gap-2 border border-gray-50/60 rounded-md p-1.5 bg-white hover:border-orange-200 transition-colors"
                 >
-                  {/* Image wrapper: Compact square box */}
-                  <div className="w-12 h-12 sm:w-full sm:h-auto sm:aspect-square flex-shrink-0 bg-gray-50 overflow-hidden rounded-md sm:rounded-none">
+                  {/* Micro Image Thumbnail: Scaled way down to a strict 36px/40px icon frame */}
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 bg-gray-50 overflow-hidden rounded-md">
                     <img
                       src={
                         item.item?.image ||
-                        "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=200&auto=format&fit=crop"
+                        "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=150&auto=format&fit=crop"
                       }
                       alt={item.item?.name || "food"}
                       className="w-full h-full object-cover object-center"
                     />
                   </div>
 
-                  {/* Details block: Side-by-side on mobile, bottom-stacked on desktop */}
-                  <div className="p-0 sm:p-2 flex-1 min-w-0">
-                    <p className="font-bold text-gray-800 text-xs truncate">
+                  {/* Micro Details block */}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-gray-800 text-[11px] leading-tight truncate">
                       {item.item?.name || "Delicious Item"}
                     </p>
-                    <p className="text-[11px] text-gray-400 mt-0.5 font-medium">
+                    <p className="text-[10px] text-gray-400 mt-0.5 font-medium leading-none">
                       Qty: {item.quantity} ×{" "}
-                      <span className="text-gray-700 font-semibold">
+                      <span className="text-gray-600 font-semibold">
                         ₹{item.price}
                       </span>
                     </p>
@@ -82,14 +78,14 @@ const UserOrderCard = ({ data }) => {
             </div>
 
             {/* Inner Subtotal Status Bar */}
-            <div className="flex justify-between items-center border-t border-gray-100 pt-2.5 mt-3">
-              <p className="text-[11px] font-semibold text-gray-400">
+            <div className="flex justify-between items-center border-t border-gray-50 pt-1.5 mt-2">
+              <p className="text-[10px] font-semibold text-gray-400">
                 Subtotal:{" "}
-                <span className="text-gray-900 font-extrabold text-xs sm:text-sm ml-1">
+                <span className="text-gray-900 font-extrabold text-xs ml-1">
                   ₹{order.subtotal}
                 </span>
               </p>
-              <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded capitalize">
+              <span className="text-[9px] font-bold text-sky-600 bg-sky-50 px-1 py-0.5 rounded capitalize">
                 {order.status || "pending"}
               </span>
             </div>
@@ -98,17 +94,17 @@ const UserOrderCard = ({ data }) => {
       </div>
 
       {/* === FOOTER ACTION SECTION === */}
-      <div className="px-4 py-3 bg-white border-t border-gray-100 flex flex-row justify-between items-center gap-2">
+      <div className="px-3 py-2 bg-white border-t border-gray-100 flex justify-between items-center gap-2">
         <div>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+          <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">
             Grand Total
           </p>
-          <p className="text-base sm:text-lg font-black text-gray-900 leading-tight">
+          <p className="text-sm sm:text-base font-black text-gray-900 leading-tight">
             ₹
             {data.shopOrder?.reduce((acc, curr) => acc + curr.subtotal, 0) || 0}
           </p>
         </div>
-        <button className="px-4 py-2 bg-[#FF4F2E] text-white font-bold rounded-lg text-xs shadow-sm hover:bg-[#E03E20] active:scale-[0.98] transition-all duration-150">
+        <button className="px-3.5 py-1.5 bg-[#FF4F2E] text-white font-bold rounded-md text-[11px] shadow-xs hover:bg-[#E03E20] active:scale-[0.98] transition-all duration-150">
           Track Order
         </button>
       </div>
