@@ -1,13 +1,36 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const OwnerOrderCard = ({ data }) => {
   const [currentStatus, setCurrentStatus] = useState(
     data?.shopOrder?.[0]?.status || "pending",
   );
+  const { serverUrl } = useSelector((state) => state.auth);
 
-  const handleStatusChange = (e) => {
-    const newStatus = e.target.value;
-    setCurrentStatus(newStatus);
+  // console.log(data);
+
+  const handleStatusChange = async (orderId, shopId, newStatus) => {
+    try {
+      console.log(
+        "Order ID:",
+        orderId,
+        "Shop ID:",
+        shopId,
+        "New Status:",
+        newStatus,
+      );
+      const result = await axios.post(
+        `${serverUrl}/order/update-status/${orderId}/${shopId}`,
+        { status: newStatus },
+        { withCredentials: true },
+      );
+
+      console.log(result);
+      setCurrentStatus(newStatus);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Trigger print logic for just this card instance
@@ -73,7 +96,7 @@ const OwnerOrderCard = ({ data }) => {
 
             <div className="text-[11px] text-gray-600 space-y-0.5 font-medium">
               <p className="text-gray-900 font-bold flex items-center gap-1">
-                👤 {data.user?.name || "Guest Customer"}
+                👤 {data.user?.fullName || "Guest Customer"}
               </p>
               <p className="text-gray-500 flex items-center gap-1">
                 ✉️{" "}
@@ -161,40 +184,47 @@ const OwnerOrderCard = ({ data }) => {
                   </span>
                 </p>
               </div>
+
+              <div className="no-print px-3 py-2 bg-white border-t border-gray-100 flex justify-between items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor={`status-select-${data._id}`}
+                    className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden sm:inline"
+                  >
+                    Status:
+                  </label>
+                  <select
+                    id={`status-select-${data._id}`}
+                    value={currentStatus}
+                    onChange={(e) =>
+                      handleStatusChange(
+                        data._id,
+                        order.shop._id,
+                        e.target.value,
+                      )
+                    }
+                    className="bg-stone-50 border border-gray-200 text-gray-700 font-bold text-[11px] px-2 py-1.5 rounded-md focus:outline-none focus:border-orange-500 cursor-pointer"
+                  >
+                    <option value="pending">⏳ Pending</option>
+                    <option value="preparing">🍳 Preparing</option>
+                    <option value="out of delivery">🛵 Out For Delivery</option>
+                    <option value="delivered">✅ Delivered</option>
+                    <option value="cancelled">❌ Cancelled</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={handlePrint}
+                  className="px-2.5 py-1.5 border border-gray-200 text-gray-600 font-bold rounded-md text-[10px] hover:bg-stone-50 active:scale-[0.98] transition-all"
+                >
+                  🖨️ KOT Print
+                </button>
+              </div>
             </div>
           ))}
         </div>
 
         {/* === ACTION TRAY (Hides itself automatically when printing) === */}
-        <div className="no-print px-3 py-2 bg-white border-t border-gray-100 flex justify-between items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <label
-              htmlFor={`status-select-${data._id}`}
-              className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden sm:inline"
-            >
-              Status:
-            </label>
-            <select
-              id={`status-select-${data._id}`}
-              value={currentStatus}
-              onChange={handleStatusChange}
-              className="bg-stone-50 border border-gray-200 text-gray-700 font-bold text-[11px] px-2 py-1.5 rounded-md focus:outline-none focus:border-orange-500 cursor-pointer"
-            >
-              <option value="pending">⏳ Pending</option>
-              <option value="preparing">🍳 Preparing</option>
-              <option value="out of delivery">🛵 Out For Delivery</option>
-              <option value="delivered">✅ Delivered</option>
-              <option value="cancelled">❌ Cancelled</option>
-            </select>
-          </div>
-
-          <button
-            onClick={handlePrint}
-            className="px-2.5 py-1.5 border border-gray-200 text-gray-600 font-bold rounded-md text-[10px] hover:bg-stone-50 active:scale-[0.98] transition-all"
-          >
-            🖨️ KOT Print
-          </button>
-        </div>
       </div>
     </>
   );

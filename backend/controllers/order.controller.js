@@ -94,7 +94,7 @@ export const getUserOrders = async (req, res) => {
         // Include deliveryAddress, latitude, longitude if stored on the user document
         .populate(
           "user",
-          "name email mobile deliveryAddress latitude longitude",
+          "fullName email mobile deliveryAddress latitude longitude",
         )
         .populate("shopOrder.shopOrderItems.item", "name image price");
 
@@ -123,5 +123,34 @@ export const getUserOrders = async (req, res) => {
     return res
       .status(500)
       .json({ message: `get user orders error: ${error.message}` });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId, shopId } = req.params;
+    const { status } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    console.log(shopId);
+    const shopOrder = order.shopOrder.find((o) => o.shop.toString() === shopId);
+
+    if (!shopOrder) {
+      return res.status(404).json({ message: "Shop order not found" });
+    }
+
+    shopOrder.status = status;
+    await order.save();
+
+    return res
+      .status(200)
+      .json({ message: "Order status updated successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `update order status error: ${error.message}` });
   }
 };
