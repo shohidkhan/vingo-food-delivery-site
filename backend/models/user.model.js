@@ -39,9 +39,20 @@ const userSchema = mongoose.Schema(
     optExpires: {
       type: Date,
     },
+    location: {
+      type: String,
+      enum: ["point"],
+      default: "point",
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0],
+    },
   },
   { timestamps: true },
 );
+
+userSchema.index({ location: "2dsphere" });
 
 const User = new mongoose.model("User", userSchema);
 export default User;
