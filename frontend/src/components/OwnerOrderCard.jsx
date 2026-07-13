@@ -7,6 +7,7 @@ const OwnerOrderCard = ({ data }) => {
     data?.shopOrder?.[0]?.status || "pending",
   );
   const { serverUrl } = useSelector((state) => state.auth);
+  const [availableDeliveryBoys, setAvailableDeliveryBoys] = useState([]);
 
   // console.log(data);
 
@@ -26,8 +27,9 @@ const OwnerOrderCard = ({ data }) => {
         { withCredentials: true },
       );
 
-      console.log(result);
       setCurrentStatus(newStatus);
+      setAvailableDeliveryBoys(result.data.availableDeliveryBoys);
+      console.log(result.data);
     } catch (error) {
       console.log(error);
     }

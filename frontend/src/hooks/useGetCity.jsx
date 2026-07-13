@@ -20,7 +20,11 @@ const useGetCity = () => {
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${import.meta.env.VITE_GEOAPIKEY}`,
       );
       // console.log(result.data.results[0]);
-      dispatch(setCurrentCity(result?.data?.results[0]?.city));
+      dispatch(
+        setCurrentCity(
+          result?.data?.results[0]?.city || result?.data?.results[0]?.county,
+        ),
+      );
       dispatch(setCurrentState(result?.data?.results[0]?.state));
       dispatch(setCurrentAddress(result?.data?.results[0]?.address_line2));
       dispatch(setAddress(result?.data?.results[0]?.address_line2));

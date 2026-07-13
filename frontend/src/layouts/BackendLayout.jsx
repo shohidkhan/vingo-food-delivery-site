@@ -6,6 +6,7 @@ import useGetShop from "../hooks/useGetShop";
 import useShopByCity from "../hooks/useShopByCity";
 import useGetItemByCity from "../hooks/useGetItemByCity";
 import useGetMyOrders from "../hooks/useGetMyOrders";
+import useUserLocationUpdate from "../hooks/useUserLocationUpdate";
 
 const BackendLayout = () => {
   useGetCity();
@@ -13,6 +14,7 @@ const BackendLayout = () => {
   useShopByCity();
   useGetItemByCity();
   useGetMyOrders();
+  useUserLocationUpdate();
   return (
     <div className="min-h-screen">
       <Navbar></Navbar>
