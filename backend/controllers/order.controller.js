@@ -200,15 +200,15 @@ export const updateOrderStatus = async (req, res) => {
     }
     await order.save();
     await shopOrder.save();
+    const updateShopOrder = await order.shopOrder.find(
+      (o) => o.shop.toString() === shopId,
+    );
     await order.populate("shopOrder.shop", "name");
     await order.populate(
       "shopOrder.assignedDeliveryBoy",
       "fullName email mobile",
     );
 
-    const updateShopOrder = await order.shopOrder.find(
-      (o) => o.shop.toString() === shopId,
-    );
     return res.status(200).json({
       shopOrder: updateShopOrder,
       assignedDeliveryBoys: updateShopOrder?.assignedDeliveryBoy,

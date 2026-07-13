@@ -9,8 +9,6 @@ const OwnerOrderCard = ({ data }) => {
   const { serverUrl } = useSelector((state) => state.auth);
   const [availableDeliveryBoys, setAvailableDeliveryBoys] = useState([]);
 
-  // console.log(data);
-
   const handleStatusChange = async (orderId, shopId, newStatus) => {
     try {
       console.log(
@@ -28,14 +26,13 @@ const OwnerOrderCard = ({ data }) => {
       );
 
       setCurrentStatus(newStatus);
-      setAvailableDeliveryBoys(result.data.availableDeliveryBoys);
+      setAvailableDeliveryBoys(result.data.availableDeliveryBoys || []);
       console.log(result.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Trigger print logic for just this card instance
   const handlePrint = () => {
     window.print();
   };
@@ -50,7 +47,6 @@ const OwnerOrderCard = ({ data }) => {
 
   return (
     <>
-      {/* 🟢 STEP 1: Injection of local print-media override styles */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -77,7 +73,6 @@ const OwnerOrderCard = ({ data }) => {
         }}
       />
 
-      {/* 🟢 STEP 2: Added dynamic print identity class here */}
       <div
         className={`print-container-${data._id} bg-white border border-gray-100 rounded-xl shadow-xs overflow-hidden mb-4`}
       >
@@ -110,7 +105,7 @@ const OwnerOrderCard = ({ data }) => {
                 📞 <span>{data.user?.mobile || data.user?.phone || "N/A"}</span>
               </p>
               <p className="text-gray-500 flex items-center gap-1">
-                📞 <span>{data.deliveryAddress.text}</span>
+                📍 <span>{data.deliveryAddress?.text || "N/A"}</span>
               </p>
             </div>
           </div>
@@ -120,6 +115,7 @@ const OwnerOrderCard = ({ data }) => {
               {new Date(data.createdAt).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
+                hour12: true,
               })}
             </p>
             <span
@@ -187,7 +183,8 @@ const OwnerOrderCard = ({ data }) => {
                 </p>
               </div>
 
-              <div className="no-print px-3 py-2 bg-white border-t border-gray-100 flex justify-between items-center gap-4">
+              {/* Action Buttons Tray */}
+              <div className="no-print mt-2 pt-2 border-t border-gray-100 flex justify-between items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <label
                     htmlFor={`status-select-${data._id}`}
@@ -222,11 +219,35 @@ const OwnerOrderCard = ({ data }) => {
                   🖨️ KOT Print
                 </button>
               </div>
+
+              {/* FIXED CONDITION: Check currentStatus state variable instead of data.shopOrder.status */}
+              {currentStatus === "out of delivery" && (
+                <div className="mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
+                  <p className="text-xs text-emerald-800 font-bold mb-1.5">
+                    🛵 Available Delivery Personnel:
+                  </p>
+                  {availableDeliveryBoys?.length > 0 ? (
+                    <div className="space-y-1">
+                      {availableDeliveryBoys.map((b, indx) => (
+                        <p
+                          key={b._id}
+                          className="text-xs text-emerald-700 font-medium"
+                        >
+                          {indx + 1}. {b.fullName}{" "}
+                          {b.mobile ? `(${b.mobile})` : ""}
+                        </p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500 italic">
+                      No delivery personnel active/available right now.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
-
-        {/* === ACTION TRAY (Hides itself automatically when printing) === */}
       </div>
     </>
   );
